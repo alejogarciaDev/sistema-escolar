@@ -316,14 +316,46 @@ class _PanolDashboardState extends State<PanolDashboard> with SingleTickerProvid
                     itemCount: _prestamos.length,
                     itemBuilder: (_, i) {
                       final l = _prestamos[i];
-                      final catName = l['category_name'] ?? l['category']?['name'] ?? '?';
-                      final userName = l['user_name'] ?? l['user']?['name'] ?? l['user_id'] ?? '?';
+                      final catName = l['category_name'] ?? '?';
+                      final userName = l['user_name'] ?? l['user_id'] ?? '?';
                       return Card(
                         margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        child: ListTile(
-                          leading: const Icon(Icons.bookmark, color: Colors.teal),
-                          title: Text(catName, style: const TextStyle(fontWeight: FontWeight.w600)),
-                          subtitle: Text('Usuario: $userName  |  Cant: ${l['quantity'] ?? 1}'),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  const Icon(Icons.bookmark, color: Colors.teal, size: 28),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(catName, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                                        Text('$userName  |  Cant: ${l['quantity'] ?? 1}',
+                                          style: const TextStyle(color: Colors.grey, fontSize: 13)),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton.icon(
+                                  icon: const Icon(Icons.reply, size: 18),
+                                  label: const Text('Devolver'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.teal,
+                                    foregroundColor: Colors.white,
+                                  ),
+                                  onPressed: () => _mostrarDialogDevolver(l['id'] as int),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     },
@@ -332,6 +364,36 @@ class _PanolDashboardState extends State<PanolDashboard> with SingleTickerProvid
         ),
       ],
     );
+  }
+
+  void _mostrarDialogDevolver(int loanId) {
+    final descCtrl = TextEditingController();
+    showDialog(context: context, builder: (ctx) => AlertDialog(
+      title: const Text('Devolver Préstamo'),
+      content: TextField(
+        controller: descCtrl,
+        decoration: const InputDecoration(labelText: 'Notas de devolución'),
+        maxLines: 3,
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancelar')),
+        ElevatedButton(
+          onPressed: () async {
+            Navigator.pop(ctx);
+            try {
+              await _api.returnLoan(loanId, description: descCtrl.text.isEmpty ? null : descCtrl.text);
+              await _loadData();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Préstamo devuelto correctamente')),
+              );
+            } catch (e) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+            }
+          },
+          child: const Text('Devolver'),
+        ),
+      ],
+    ));
   }
 
   @override

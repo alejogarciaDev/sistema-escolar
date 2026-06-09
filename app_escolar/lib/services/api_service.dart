@@ -116,15 +116,17 @@ class ApiService {
   }
 
   Future<List<dynamic>> getDocumentos() async {
-    final res = await http.get(Uri.parse('$_campusUrl/documentos/'), headers: _headers);
+    final res = await http.get(Uri.parse('$_campusUrl/misdocumentos/'), headers: _headers);
     if (res.statusCode != 200) throw Exception('Error al obtener documentos');
-    return jsonDecode(res.body);
+    final body = jsonDecode(res.body);
+    return body['contenido'] as List<dynamic>? ?? [];
   }
 
   Future<List<dynamic>> getCompartidos() async {
     final res = await http.get(Uri.parse('$_campusUrl/compartidos/'), headers: _headers);
     if (res.statusCode != 200) throw Exception('Error al obtener compartidos');
-    return jsonDecode(res.body);
+    final body = jsonDecode(res.body);
+    return body['contenido'] as List<dynamic>? ?? [];
   }
 
   Future<List<dynamic>> getPermisos() async {
@@ -229,6 +231,16 @@ class ApiService {
       body: jsonEncode({'description_loan': description}),
     );
     if (res.statusCode != 200) throw Exception('Error al entregar pedido');
+    return jsonDecode(res.body);
+  }
+
+  Future<Map<String, dynamic>> returnLoan(int loanId, {String? description}) async {
+    final res = await http.put(
+      Uri.parse('$_baseUrl/loans/$loanId/return'),
+      headers: _headers,
+      body: jsonEncode({'description_return': description}),
+    );
+    if (res.statusCode != 200) throw Exception('Error al devolver préstamo');
     return jsonDecode(res.body);
   }
 

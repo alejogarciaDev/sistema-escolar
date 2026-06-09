@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+﻿from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from datetime import datetime
 
@@ -8,7 +8,7 @@ from app.modules.panol.categories.models import Category
 
 
 # =========================
-# CREAR PRÉSTAMO (AL ENTREGAR PEDIDO)
+# CREAR PRÃ‰STAMO (AL ENTREGAR PEDIDO)
 # =========================
 def create_loan(db: Session, user_id: int, panolero_id: int, category_id: int, quantity: int, order_id: int | None = None, description_loan: str | None = None):
     loan = Loan(
@@ -29,13 +29,13 @@ def create_loan(db: Session, user_id: int, panolero_id: int, category_id: int, q
 
 
 # =========================
-# DEVOLVER HERRAMIENTA POR CATEGORÍA
+# DEVOLVER HERRAMIENTA POR CATEGORÃA
 # =========================
 def return_tools_by_category(db: Session, category_barcode: str, user_id: int, quantity: int, description_return: str | None = None):
     
     category = db.query(Category).filter(Category.barcode == category_barcode).first()
     if not category:
-        raise HTTPException(status_code=404, detail="Categoría no encontrada")
+        raise HTTPException(status_code=404, detail="CategorÃ­a no encontrada")
 
     loans = (
         db.query(Loan)
@@ -45,7 +45,7 @@ def return_tools_by_category(db: Session, category_barcode: str, user_id: int, q
 
     total_prestado = sum([l.quantity for l in loans])
     if total_prestado < quantity:
-        raise HTTPException(status_code=400, detail=f"El profesor solo tiene {total_prestado} herramientas prestadas de esta categoría")
+        raise HTTPException(status_code=400, detail=f"El profesor solo tiene {total_prestado} herramientas prestadas de esta categorÃ­a")
 
     # Devolver cantidad
     remaining_to_return = quantity
@@ -93,12 +93,35 @@ def get_active_loans(db: Session):
 
     return [
         {
+            "id": loan.id,
+            "user_id": loan.user_id,
+            "user_name": loan.user.name,
             "category_name": loan.category.name if loan.category else "Desconocida",
             "quantity": loan.quantity,
-            "user": loan.user.name
+            "description_loan": loan.description_loan
         }
         for loan in loans
     ]
+
+
+def return_loan_by_id(db: Session, loan_id: int, description_return: str | None = None):
+    loan = db.query(Loan).filter(Loan.id == loan_id).first()
+    if not loan:
+        raise HTTPException(status_code=404, detail="Préstamo no encontrado")
+    if loan.status != "active":
+        raise HTTPException(status_code=400, detail="El préstamo ya fue devuelto")
+
+    loan.returned_at = datetime.utcnow()
+    loan.status = "returned"
+    loan.description_return = description_return
+
+    cat = db.query(Category).filter(Category.id == loan.category_id).first()
+    if cat:
+        cat.stock += loan.quantity
+
+    db.commit()
+    return {"message": "Préstamo devuelto correctamente", "loan_id": loan_id}
+
 
 # =========================
 # PRESTAMOS POR PROFESOR

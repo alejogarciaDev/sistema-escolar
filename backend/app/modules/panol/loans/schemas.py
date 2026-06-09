@@ -5,3 +5,6 @@ class ReturnByCategory(BaseModel):
     user_id: int
     quantity: int
     description_return: str | None = None
+
+class ReturnLoanById(BaseModel):
+    description_return: str | None = None

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+﻿from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
@@ -10,7 +10,7 @@ router = APIRouter(prefix="/loans", tags=["Loans"])
 
 
 # =========================
-# DEVOLVER (NUEVO POR CATEGORÍA)
+# DEVOLVER (NUEVO POR CATEGORÃA)
 # =========================
 @router.post("/return")
 def return_tool(
@@ -30,6 +30,16 @@ def return_tool(
 # =========================
 # ACTIVOS
 # =========================
+@router.put("/{loan_id}/return")
+def return_loan(
+    loan_id: int,
+    data: schemas.ReturnLoanById,
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user)
+):
+    return service.return_loan_by_id(db, loan_id, data.description_return)
+
+
 @router.get("/active")
 def get_active_loans(
     db: Session = Depends(get_db),

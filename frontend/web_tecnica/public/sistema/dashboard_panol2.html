@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -97,17 +97,8 @@
 </section>
 
 <section class="admin-section">
-    <h3>🔄 Devoluciones (Escanear Categoría)</h3>
-    <form id="returnForm" style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
-        <select id="returnProfesor" required style="flex: 1; padding: 8px;">
-            <option value="">Seleccionar Profesor que devuelve</option>
-        </select>
-        <input type="text" id="returnCategoryBarcode" placeholder="Escanear QR Categoría" required style="flex: 1; padding: 8px; border-radius: 3px; border: 1px solid #ccc;">
-        <input type="number" id="returnQuantity" placeholder="Cantidad" required min="1" value="1" style="width: 80px; padding: 8px;">
-        <input type="text" id="returnDescription" placeholder="Nota (opcional)" style="flex: 1; padding: 8px; border-radius: 3px; border: 1px solid #ccc;">
-        <button type="submit" style="background-color: #17a2b8; color: white; border: none; padding: 8px 15px; border-radius: 3px; cursor: pointer; font-weight: bold;">Devolver</button>
-    </form>
-    <div id="returnList" style="margin-top: 10px;"></div>
+    <h3>🔄 Devoluciones</h3>
+    <p style="color: #aaa; margin-bottom: 10px;">Para devolver un préstamo, use el botón "Devolver" en los Préstamos Activos de arriba.</p>
 </section>
 
 <section class="admin-section">
@@ -203,6 +194,12 @@ async function apiGet(url) {
 
 async function apiPost(url, body) {
     const res = await fetch(url, { method: "POST", headers: getAuthHeaders(), body: JSON.stringify(body) });
+    if (!res.ok) return null;
+    return await res.json();
+}
+
+async function apiPut(url, body) {
+    const res = await fetch(url, { method: "PUT", headers: getAuthHeaders(), body: JSON.stringify(body) });
     if (!res.ok) return null;
     return await res.json();
 }
@@ -530,7 +527,7 @@ async function cambiarEstadoPedido(orderId, action) {
 
 // ================= ACTIVOS AGRUPADOS =================
 async function cargarPrestamosActivos() {
-    const data = await apiGet(`${API_URL}/loans/active/by-professor`);
+    const data = await apiGet(${API_URL}/loans/active);
     const list = document.getElementById("activeLoansList");
     if (!list || !data) return;
 
@@ -541,127 +538,33 @@ async function cargarPrestamosActivos() {
         return;
     }
 
-    data.forEach(p => {
-        const grouped = {};
-        p.tools.forEach(t => {
-            if(!grouped[t.category]) grouped[t.category] = [];
-            grouped[t.category].push(t.barcode);
-        });
+    data.forEach(loan => {
+        const userName = loan.user_name || "Usuario #" + loan.user_id;
+        const catName = loan.category_name || "Desconocida";
+        const qty = loan.quantity || 1;
+        const loanId = loan.id;
 
-        let toolsHTML = "";
-        let summaryTextArray = [];
-        Object.keys(grouped).forEach(catId => {
-            const catName = categoriesMap[catId] || `Categoría ${catId}`;
-            const barcodes = grouped[catId].join(", ");
-            const count = grouped[catId].length;
-            toolsHTML += `<li style="margin-bottom: 5px; padding: 8px 5px; border-bottom: 1px solid rgba(255,255,255,0.1); color: #fff;">${count}x <b>${catName}</b> <span style="opacity: 0.8;">(Códigos: ${barcodes})</span></li>`;
-            summaryTextArray.push(`${count} x ${catName}`);
-        });
-
-        const summaryRightText = "• " + summaryTextArray.join(", ");
-        const profIdClean = p.profesor.replace(/\s+/g, '_') + '_' + Math.floor(Math.random() * 1000);
-
-        list.innerHTML += `
-            <div style="margin-bottom: 15px;">
-                <div class="panol-item" style="margin-bottom: 0; align-items: center; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <span><b>${p.profesor}</b></span>
-                    <span style="color: #fff; opacity: 0.9;">${summaryRightText}</span>
-                    <button onclick="document.getElementById('detalles_${profIdClean}').style.display = document.getElementById('detalles_${profIdClean}').style.display === 'none' ? 'block' : 'none'" style="background-color: #007bff; color: white; border-radius: 3px; border: none; padding: 6px 15px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">Ver Detalles</button>
-                </div>
-                <div id="detalles_${profIdClean}" style="display: none; padding: 15px; background-color: rgb(53, 48, 48); border-radius: 0 0 5px 5px; margin-top: -3px; color: #fff;">
-                    <ul style="list-style: none; margin: 0; padding: 0;">
-                        ${toolsHTML}
-                    </ul>
+        list.innerHTML += "
+            <div style=\"margin-bottom: 10px;\">
+                <div class=\"panol-item\" style=\"display: flex; justify-content: space-between; align-items: center; padding: 12px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);\">
+                    <div>
+                        <b></b> x
+                        <br><span style=\"font-size: 0.85rem; opacity: 0.7;\"></span>
+                    </div>
+                    <button onclick=\"devolverPrestamo()\" style=\"background-color: #17a2b8; color: white; border: none; padding: 8px 18px; border-radius: 4px; cursor: pointer; font-weight: bold;\">Devolver</button>
                 </div>
             </div>
-        `;
+        ";
     });
 }
 
-// ================= DEVOLUCIONES ESCANEO =================
-const returnInput = document.getElementById("returnScan");
-if (returnInput) {
-    returnInput.addEventListener("keypress", async function(e) {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            const code = this.value.trim();
-            if (code) {
-                const res = await apiPost(`${API_URL}/loans/return`, { barcode: code });
-                if (res) {
-                    showToast(`✔ Herramienta ${code} devuelta correctamente`);
-                    this.value = "";
-                    
-                    const returnList = document.getElementById("returnList");
-                    const time = new Date().toLocaleTimeString();
-                    returnList.innerHTML = `<div style="padding: 5px; border-bottom: 1px solid #eee; color: #155724; background-color: #d4edda; border-radius: 3px; margin-top: 5px;">✅ [${time}] Código <b>${code}</b> devuelto y disponible.</div>` + returnList.innerHTML;
-
-                    cargarTodo();
-                } else {
-                    showToast("❌ Error al devolver. Asegúrate de que el código sea correcto y esté prestado.", true);
-                }
-            }
-        }
-    });
-}
-
-// ================= MODAL =================
-let currentOrderIds = [];
-
-function abrirModal(orderIds, requiredText) {
-    currentOrderIds = orderIds;
-    document.getElementById("scanInput").value = "";
-    
-    // Add required text to modal if it exists, else create it
-    let reqDiv = document.getElementById("modalRequiredItems");
-    if (!reqDiv) {
-        reqDiv = document.createElement("div");
-        reqDiv.id = "modalRequiredItems";
-        reqDiv.style.cssText = "background: #f8d7da; color: #721c24; padding: 10px; margin-bottom: 15px; border-radius: 5px; font-weight: bold;";
-        document.getElementById("scanInput").parentNode.insertBefore(reqDiv, document.getElementById("scanInput"));
-    }
-    reqDiv.textContent = requiredText;
-
-    document.getElementById("scanModal").style.display = "block";
-    document.getElementById("scanInput").focus();
-}
-
-function cerrarModal() {
-    document.getElementById("scanModal").style.display = "none";
-    currentOrderIds = [];
-}
-
-const scanInput = document.getElementById("scanInput");
-if (scanInput) {
-    scanInput.addEventListener("keypress", function(e) {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            this.value = this.value.trim() + ", ";
-        }
-    });
-}
-
-async function confirmarEntrega() {
-    const textValue = document.getElementById("scanInput").value;
-    const scannedCodes = textValue.split(",").map(c => c.trim()).filter(c => c);
-
-    if (!currentOrderIds || currentOrderIds.length === 0 || scannedCodes.length === 0) {
-        return alert("Escanéa al menos una herramienta");
-    }
-    try {
-        const firstOrderId = currentOrderIds[0];
-        const res1 = await apiPost(`${API_URL}/orders/${firstOrderId}/fulfill`, { barcodes: scannedCodes });
-        if (!res1) return alert("Error al procesar la entrega. Verifica los códigos.");
-
-        for (let i = 1; i < currentOrderIds.length; i++) {
-            await apiPost(`${API_URL}/orders/${currentOrderIds[i]}/fulfill`, { barcodes: [] });
-        }
-        alert("¡Herramientas entregadas correctamente!");
-        cerrarModal();
-        cargarTodo();
-    } catch (e) {
-        console.error(e);
-        alert("Ocurrió un error al confirmar la entrega.");
-    }
+async function devolverPrestamo(loanId) {
+    const desc = prompt("Notas de devolución (opcional):");
+    const body = desc && desc.trim() ? { description_return: desc.trim() } : {};
+    const res = await apiPut(${API_URL}/loans//return, body);
+    if (!res) return showToast("Error al devolver préstamo", true);
+    showToast("Préstamo devuelto correctamente");
+    cargarTodo();
 }
 
 async function devolver(code){
