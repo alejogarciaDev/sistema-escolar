@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Portal Institucional</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="shortcut icon" href="media/imagen.ico" type="image/x-icon">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <header class="main-header">
+    <!-- Espacio para imagen futura -->
+    <div class="logo-space" >
+        <img src="media/logo.png" alt="logo" class="logo-img">
+    </div>
+
+    <!-- Título centrado -->
+    <div class="title-header">Escuela Técnica N°1 Nuestra Señora del Valle</div>
+
+    <!-- Botón hamburguesa -->
+    <button class="hamburger-btn" id="hamburgerBtn">☰</button>
+
+    <!-- Menú overlay -->
+    <div id="fullscreenMenu" class="fullscreen-menu-header">
+        <a href="index.html">Inicio</a>
+        <a href="temario.html">Termario</a>
+        <a href="sistema/login.html ">sesion</a>
+        <a href="normativa.html">normativa</a>
+        <a href="#">Cerrar</a>
+    </div>
+    <script>
+    const hamburgerBtn = document.getElementById("hamburgerBtn");
+    const fullscreenMenu = document.getElementById("fullscreenMenu");
+
+    hamburgerBtn.addEventListener("click", () => {
+        fullscreenMenu.classList.toggle("show");
+    });
+
+    // Cerrar menú al tocar cualquier enlace
+    fullscreenMenu.querySelectorAll("a").forEach(link => {
+        link.addEventListener("click", () => {
+            fullscreenMenu.classList.remove("show");
+        });
+    });
+
+    // Cerrar menú si clic fuera de los enlaces
+    fullscreenMenu.addEventListener("click", (e) => {
+        if(e.target === fullscreenMenu){
+            fullscreenMenu.classList.remove("show");
+        }
+    });
+   </script>
+   </header>
+ 
+    <main class="main">
+<h2>normativa</h2>
+
+</main>
+
+    <footer class="footer">
+        
+            <div class="footer-section">
+                <h4>🏫 E.E.S.T. N°1 Muñiz</h4>
+                <p>Escuela de Educación Secundaria Técnica N°1 "Nuestra Señora del Valle".<br>Institución pública estatal con más de 75 años formando técnicos.</p>
+            </div>
+            <div class="footer-section">
+                <h4>🔗 Navegación</h4>
+                <ul>
+                    <li><a href="index.html">🏠 Inicio</a></li>
+                    <li><a href="temario.html">📋 Temario</a></li>
+                    <li><a href="normativa.html">📜 Normativa</a></li>
+                    <li><a href="informatica.html">💻 Informática</a></li>
+                    <li><a href="electromecanica.html">⚙️ Electromecánica</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>📞 Contacto</h4>
+                <ul>
+                    <li>📍 Farías 480, Muñiz</li>
+                    <li>🏙️ San Miguel, Bs. As.</li>
+                    <li>📞 (011) 4664-0516</li>
+                    <li>📅 Fundada en 1949</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 E.E.S.T. N°1 Muñiz — Portal Institucional |
+                Desarrollado por <a href="https://github.com/alejogarciaDev" target="_blank" class="dev-name">Alejo García</a>
+            </p>
+        </div>
+    </footer>
+    <script>
+  let index = 0;
+  const images = document.querySelectorAll(".carousel img");
+
+  setInterval(() => {
+    images[index].classList.remove("active");
+    index = (index + 1) % images.length;
+    images[index].classList.add("active");
+  }, 3000);
+</script>
+</body>
+</html>

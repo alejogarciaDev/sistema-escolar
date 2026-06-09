@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Admin - Usuarios</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="shortcut icon" href="media/imagen.ico" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .admin-tabs { display:flex; gap:5px; margin-bottom:20px; flex-wrap:wrap; }
+        .admin-tabs button { padding:10px 18px; border:none; border-radius:5px; cursor:pointer; font-size:0.95rem; background:#555; color:#fff; transition:background 0.3s; }
+        .admin-tabs button.active { background:#9b0b0b; }
+        .admin-tabs button:hover { background:#7a0808; }
+        .tab-content { display:none; }
+        .tab-content.active { display:block; }
+        table { width:100%; border-collapse:collapse; margin-top:10px; background:#333; color:#eee; border-radius:8px; overflow:hidden; }
+        th, td { padding:10px; text-align:left; border-bottom:1px solid #555; }
+        th { background:#9b0b0b; color:white; }
+        td { color:#eee; }
+        .btn-small { padding:4px 10px; font-size:0.8rem; border:none; border-radius:4px; cursor:pointer; color:white; margin:2px; }
+        .btn-edit { background:#e67e22; }
+        .btn-edit:hover { background:#d35400; }
+        .btn-delete { background:#e74c3c; }
+        .btn-delete:hover { background:#c0392b; }
+        .badge { display:inline-block; padding:2px 8px; border-radius:10px; font-size:0.75rem; font-weight:bold; color:white; }
+        .badge-admin { background:#9b0b0b; }
+        .badge-profesor { background:#2980b9; }
+        .badge-alumno { background:#27ae60; }
+        .badge-panol { background:#8e44ad; }
+        .badge-oficina { background:#f39c12; }
+        .row { display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; }
+        .row input, .row select { padding:8px; font-size:14px; flex:1 1 150px; }
+        .filtro { margin-bottom:15px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+        .dash-switcher { position:relative; display:inline-block; }
+        .dash-btn { background:#7a0808; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-size:0.85rem; }
+        .dash-btn:hover { background:#5c0606; }
+        .dash-dropdown { display:none; position:absolute; right:0; top:100%; background:#222; border-radius:6px; box-shadow:0 4px 12px rgba(0,0,0,0.4); z-index:1000; min-width:200px; overflow:hidden; }
+        .dash-dropdown.show { display:block; }
+        .dash-dropdown a { display:block; padding:10px 16px; color:#ddd; text-decoration:none; font-size:0.9rem; border-bottom:1px solid #444; }
+        .dash-dropdown a:hover { background:#333; color:#e74c3c; }
+        .dash-dropdown a:last-child { border-bottom:none; }
+        .dash-dropdown .current { background:#3a1515; color:#e74c3c; font-weight:bold; }
+
+        .dashboard-checkboxes { display:flex; flex-direction:column; gap:8px; margin:12px 0; }
+        .dash-check-item { display:flex; align-items:center; gap:12px; padding:10px 14px; background:#2a2a2a; border-radius:6px; border:1px solid #444; }
+        .dash-check-item label { font-size:1rem; font-weight:500; cursor:pointer; flex:1; color:#eee; }
+        .dash-check-item input[type="checkbox"] { width:20px; height:20px; cursor:pointer; accent-color:#9b0b0b; }
+        .dash-check-item .perm-source { font-size:0.75rem; color:#888; }
+        .dash-check-item .perm-source.role { color:#2980b9; }
+        .dash-check-item .perm-source.extra { color:#27ae60; }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="logo-space">
+            <img src="media/logo.png" alt="logo" class="logo-img">
+        </div>
+        <div class="title-header">Panel de Administración - Usuarios</div>
+        <div class="dash-switcher">
+            <button class="dash-btn" onclick="toggleDashDropdown()">⬇ Panel Admin</button>
+            <div id="dashDropdown" class="dash-dropdown"></div>
+        </div>
+        <button class="hamburger-btn" id="hamburgerBtn">☰</button>
+        <div id="fullscreenMenu" class="fullscreen-menu-header">
+            <a href="../index.html">Inicio</a>
+            <a href="#" onclick="cerrarSesion()">Cerrar Sesión</a>
+            <a href="#">Cerrar</a>
+        </div>
+        <script>
+            document.getElementById("hamburgerBtn").addEventListener("click", () => {
+                document.getElementById("fullscreenMenu").classList.toggle("show");
+            });
+            document.querySelectorAll("#fullscreenMenu a").forEach(link => {
+                link.addEventListener("click", () => {
+                    document.getElementById("fullscreenMenu").classList.remove("show");
+                });
+            });
+        </script>
+    </header>
+
+    <main>
+        <h2>Administración de Usuarios</h2>
+
+        <div class="admin-tabs">
+            <button class="active" onclick="activarTab('crear',this)">+ Crear Usuario</button>
+            <button onclick="activarTab('listar',this)">Usuarios</button>
+            <button onclick="activarTab('dashboards',this)">Acceso a Dashboards</button>
+        </div>
+
+        <div id="tab-crear" class="tab-content active">
+            <div class="admin-section">
+                <h3>Crear Usuario</h3>
+                <form id="form-crear" class="row">
+                    <input type="text" id="newName" placeholder="Nombre" required>
+                    <input type="email" id="newEmail" placeholder="Email" required>
+                    <input type="password" id="newPassword" placeholder="Contraseña" required>
+                    <select id="newRole" required>
+                        <option value="">Seleccionar rol</option>
+                    </select>
+                    <button type="submit">Crear</button>
+                </form>
+                <div id="msg-crear" style="margin-top:10px;font-weight:bold;"></div>
+            </div>
+        </div>
+
+        <div id="tab-listar" class="tab-content">
+            <div class="admin-section">
+                <h3>Usuarios Existentes</h3>
+                <div class="filtro">
+                    <input type="text" id="filtro-nombre" placeholder="Buscar por nombre..." oninput="renderizarUsuarios()">
+                    <select id="filtro-rol" onchange="renderizarUsuarios()">
+                        <option value="">Todos los roles</option>
+                    </select>
+                </div>
+                <div style="overflow-x:auto;" id="tabla-usuarios"></div>
+            </div>
+        </div>
+
+        <div id="tab-dashboards" class="tab-content">
+            <div class="admin-section">
+                <h3>Acceso a Dashboards por Usuario</h3>
+                <p style="color:#555;font-size:0.9rem;">Seleccioná un usuario y marcá a qué paneles puede acceder. Los permisos marcados en azul son del rol, los verdes son extras asignados manualmente.</p>
+                <div class="row" style="margin-bottom:16px;">
+                    <select id="dash-user" style="flex:2;padding:8px;font-size:14px;" required>
+                        <option value="">Seleccionar usuario</option>
+                    </select>
+                </div>
+                <div id="dashboards-list"></div>
+                <div id="msg-dash" style="margin-top:10px;font-weight:bold;"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h4>Sobre nosotros</h4>
+                <p>Somos una Institución con mas de 75 años formando a tecnicos</p>
+            </div>
+            <div class="footer-section">
+                <h4>Enlaces</h4>
+                <ul>
+                    <li><a href="../index.html">Inicio</a></li>
+                    <li><a href="../contacto.html">Contacto</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Portal Institucional | Desarrollado por <a href="https://github.com/alejogarciaDev" target="_blank">Alejo Técnica</a></p>
+        </div>
+    </footer>
+
+<script src="js/config.js"></script>
+<script>
+    const API_AUTH = window.API_AUTH;
+    const API = window.API;
+
+    const DASHBOARDS = [
+        {id: "admin", label: "Panel Admin", perm: "dashboard.admin", icon: "⚙"},
+        {id: "profesor", label: "Panel Profesor", perm: "dashboard.profesor", icon: "📚"},
+        {id: "alumno", label: "Panel Alumno", perm: "dashboard.alumno", icon: "🎓"},
+        {id: "panol", label: "Panel Pañol", perm: "dashboard.panol", icon: "🔧"},
+        {id: "ofalumnos", label: "Panel Oficina Alumnos", perm: "dashboard.ofalumnos", icon: "📋"},
+    ];
+
+    function getAuthHeaders() {
+        const token = sessionStorage.getItem("token");
+        if (!token) { window.location.href = "login.html"; return {}; }
+        return { "Authorization": "Bearer " + token };
+    }
+
+    function getJsonHeaders() {
+        return { "Content-Type": "application/json", ...getAuthHeaders() };
+    }
+
+    function activarTab(tabId, btn) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.admin-tabs button').forEach(b => b.classList.remove('active'));
+        document.getElementById('tab-' + tabId).classList.add('active');
+        btn.classList.add('active');
+        if (tabId === 'listar') renderizarUsuarios();
+        if (tabId === 'crear') cargarRolesSelect();
+        if (tabId === 'dashboards') { cargarSelectUsuariosDash(); }
+    }
+
+    function cerrarSesion() {
+        sessionStorage.clear();
+        window.location.href = "login.html";
+    }
+
+    let rolesMap = {};
+
+    async function cargarRoles() {
+        try {
+            const res = await fetch(API_AUTH + '/roles', { headers: getAuthHeaders() });
+            if (!res.ok) return [];
+            const roles = await res.json();
+            rolesMap = {};
+            roles.forEach(r => rolesMap[r.id] = r.name);
+            return roles;
+        } catch (e) { return []; }
+    }
+
+    async function cargarRolesSelect() {
+        const roles = await cargarRoles();
+        const sel = document.getElementById('newRole');
+        if (sel.options.length > 1) return;
+        roles.forEach(r => {
+            const opt = document.createElement('option');
+            opt.value = r.id;
+            opt.textContent = r.name;
+            sel.appendChild(opt);
+        });
+    }
+
+    document.getElementById('form-crear').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('newName').value;
+        const email = document.getElementById('newEmail').value;
+        const password = document.getElementById('newPassword').value;
+        const role_id = parseInt(document.getElementById('newRole').value);
+        if (!role_id) { document.getElementById('msg-crear').textContent = 'Seleccioná un rol'; return; }
+        try {
+            const res = await fetch(API_AUTH + '/users', {
+                method: 'POST', headers: getJsonHeaders(),
+                body: JSON.stringify({ name, email, password, role_id })
+            });
+            const data = await res.json();
+            const msg = document.getElementById('msg-crear');
+            if (res.ok) {
+                msg.style.color = 'green';
+                msg.textContent = 'Usuario ' + data.name + ' creado correctamente';
+                document.getElementById('form-crear').reset();
+            } else {
+                msg.style.color = 'red';
+                msg.textContent = data.detail || 'Error al crear';
+            }
+        } catch (e) {
+            document.getElementById('msg-crear').textContent = 'Error de conexión';
+        }
+    });
+
+    let usuarios = [];
+
+    async function cargarUsuarios() {
+        try {
+            const res = await fetch(API_AUTH + '/users', { headers: getAuthHeaders() });
+            if (res.ok) usuarios = await res.json();
+        } catch (e) {}
+    }
+
+    function badgeRol(roleId) {
+        const nombre = rolesMap[roleId] || 'desconocido';
+        const cls = {1: 'badge-oficina', 2: 'badge-panol', 3: 'badge-admin', 4: 'badge-alumno', 5: 'badge-profesor'}[roleId] || '';
+        return '<span class="badge ' + cls + '">' + nombre + '</span>';
+    }
+
+    function renderizarUsuarios() {
+        const filtroNombre = (document.getElementById('filtro-nombre').value || '').toLowerCase();
+        const filtroRol = document.getElementById('filtro-rol').value;
+        let filtrados = usuarios.filter(u => {
+            if (filtroNombre && !u.name.toLowerCase().includes(filtroNombre)) return false;
+            if (filtroRol && u.role_id != filtroRol) return false;
+            return true;
+        });
+        const cont = document.getElementById('tabla-usuarios');
+        if (filtrados.length === 0) {
+            cont.innerHTML = '<p style="text-align:center;color:#888;">No hay usuarios.</p>';
+            return;
+        }
+        let html = '<table><thead><tr><th>ID</th><th>Nombre</th><th>Email</th><th>Rol</th><th>Acciones</th></tr></thead><tbody>';
+        filtrados.forEach(u => {
+            html += '<tr>';
+            html += '<td>' + u.id + '</td>';
+            html += '<td><strong>' + u.name + '</strong></td>';
+            html += '<td>' + u.email + '</td>';
+            html += '<td>' + badgeRol(u.role_id) + '</td>';
+            html += '<td>';
+            html += '<button class="btn-small btn-edit" onclick="cambiarRol(' + u.id + ')">Cambiar Rol</button> ';
+            html += '<button class="btn-small btn-delete" onclick="eliminarUsuario(' + u.id + ')">Eliminar</button>';
+            html += '</td></tr>';
+        });
+        html += '</tbody></table>';
+        cont.innerHTML = html;
+    }
+
+    async function eliminarUsuario(id) {
+        if (!confirm('¿Eliminar este usuario?')) return;
+        try {
+            const res = await fetch(API_AUTH + '/users/' + id, { method: 'DELETE', headers: getAuthHeaders() });
+            if (res.ok) {
+                await cargarUsuarios();
+                renderizarUsuarios();
+            } else {
+                const data = await res.json();
+                alert(data.detail || 'Error al eliminar');
+            }
+        } catch (e) { alert('Error de conexión'); }
+    }
+
+    async function cambiarRol(id) {
+        const nuevo = prompt('Nuevo role_id (1=oficina_alumnos, 2=panol, 3=admin, 4=alumno, 5=profesor):');
+        if (!nuevo) return;
+        try {
+            const res = await fetch(API_AUTH + '/users/' + id + '/role?role_id=' + parseInt(nuevo), {
+                method: 'PUT', headers: getAuthHeaders()
+            });
+            if (res.ok) {
+                await cargarUsuarios();
+                renderizarUsuarios();
+            } else {
+                const data = await res.json();
+                alert(data.detail || 'Error al cambiar rol');
+            }
+        } catch (e) { alert('Error de conexión'); }
+    }
+
+    // ================= ACCESO A DASHBOARDS =================
+    let permMap = {};
+
+    async function cargarSelectUsuariosDash() {
+        try {
+            const res = await fetch(API_AUTH + '/users', { headers: getAuthHeaders() });
+            if (!res.ok) return;
+            const users = await res.json();
+            const sel = document.getElementById('dash-user');
+            sel.innerHTML = '<option value="">Seleccionar usuario</option>';
+            users.forEach(u => {
+                const opt = document.createElement('option');
+                opt.value = u.id;
+                opt.textContent = u.id + ' - ' + u.name + ' (' + (rolesMap[u.role_id] || '') + ')';
+                sel.appendChild(opt);
+            });
+            // If user already selected, refresh
+            if (sel.value) cargarDashboardsUsuario(sel.value);
+        } catch (e) {}
+    }
+
+    document.getElementById('dash-user').addEventListener('change', function() {
+        if (this.value) cargarDashboardsUsuario(this.value);
+    });
+
+    async function cargarDashboardsUsuario(userId) {
+        try {
+            const res = await fetch(API_AUTH + '/permissions/user/' + userId, { headers: getAuthHeaders() });
+            if (!res.ok) {
+                document.getElementById('dashboards-list').innerHTML = '<p style="color:red;">Error al cargar permisos</p>';
+                return;
+            }
+            const data = await res.json();
+            const rolePerms = new Set(data.role_permissions || []);
+            const extraPerms = new Set(data.extra_permissions || []);
+
+            let html = '<div class="dashboard-checkboxes">';
+            DASHBOARDS.forEach(d => {
+                const hasFromRole = rolePerms.has(d.perm);
+                const hasFromExtra = extraPerms.has(d.perm);
+                const checked = hasFromRole || hasFromExtra;
+                const source = hasFromRole ? '<span class="perm-source role">(del rol)</span>' :
+                    hasFromExtra ? '<span class="perm-source extra">(extra)</span>' : '';
+                html += `
+                    <div class="dash-check-item">
+                        <input type="checkbox" id="dash-${d.id}" data-perm="${d.perm}" data-user="${userId}"
+                            ${checked ? 'checked' : ''} ${hasFromRole ? 'disabled' : ''}
+                            onchange="toggleDashboardPerm(this, ${userId}, '${d.perm}')">
+                        <label for="dash-${d.id}" style="${hasFromRole ? 'color:#999;' : ''}">
+                            ${d.icon} ${d.label}
+                        </label>
+                        ${source}
+                    </div>
+                `;
+            });
+            html += '</div>';
+            document.getElementById('dashboards-list').innerHTML = html;
+            document.getElementById('msg-dash').textContent = '';
+        } catch (e) {
+            document.getElementById('dashboards-list').innerHTML = '<p style="color:red;">Error de conexión</p>';
+        }
+    }
+
+    async function toggleDashboardPerm(checkbox, userId, permName) {
+        // Find permission ID from name
+        if (!permMap[permName]) {
+            try {
+                const res = await fetch(API_AUTH + '/permissions', { headers: getAuthHeaders() });
+                const perms = await res.json();
+                perms.forEach(p => permMap[p.name] = p.id);
+            } catch (e) {
+                document.getElementById('msg-dash').textContent = 'Error al cargar permisos';
+                checkbox.checked = !checkbox.checked;
+                return;
+            }
+        }
+
+        const permId = permMap[permName];
+        if (!permId) {
+            document.getElementById('msg-dash').textContent = 'Permiso ' + permName + ' no encontrado';
+            checkbox.checked = !checkbox.checked;
+            return;
+        }
+
+        const method = checkbox.checked ? 'POST' : 'DELETE';
+        try {
+            const res = await fetch(API_AUTH + '/permissions/assign-user?user_id=' + userId + '&permission_id=' + permId, {
+                method: method,
+                headers: getAuthHeaders()
+            });
+            const data = await res.json();
+            const msg = document.getElementById('msg-dash');
+            if (res.ok) {
+                msg.style.color = 'green';
+                msg.textContent = checkbox.checked ? '✔ Acceso otorgado' : '✔ Acceso removido';
+                // Refresh to show updated sources
+                setTimeout(() => cargarDashboardsUsuario(userId), 500);
+            } else {
+                msg.style.color = 'red';
+                msg.textContent = data.detail || 'Error';
+                checkbox.checked = !checkbox.checked;
+            }
+        } catch (e) {
+            document.getElementById('msg-dash').textContent = 'Error de conexión';
+            checkbox.checked = !checkbox.checked;
+        }
+    }
+
+    // ================= SELECTOR DE DASHBOARDS =================
+    const CURRENT_DASHBOARD = "admin";
+
+    function toggleDashDropdown() {
+        document.getElementById('dashDropdown').classList.toggle('show');
+    }
+
+    document.addEventListener('click', function(e) {
+        const sw = document.querySelector('.dash-switcher');
+        if (sw && !sw.contains(e.target)) {
+            document.getElementById('dashDropdown').classList.remove('show');
+        }
+    });
+
+    async function cargarSelectorDashboards() {
+        try {
+            const res = await fetch(API_AUTH + '/auth/mis-dashboards', { headers: getAuthHeaders() });
+            if (!res.ok) return;
+            const dashboards = await res.json();
+            const dd = document.getElementById('dashDropdown');
+            dd.innerHTML = '';
+            dashboards.forEach(d => {
+                if (d.id === CURRENT_DASHBOARD) {
+                    dd.innerHTML += '<a href="#" class="current">✅ ' + d.label + '</a>';
+                } else {
+                    dd.innerHTML += '<a href="' + d.url + '">➡ ' + d.label + '</a>';
+                }
+            });
+        } catch (e) {}
+    }
+
+    // ================= INIT =================
+    document.addEventListener("DOMContentLoaded", async () => {
+        const token = sessionStorage.getItem("token");
+        const role = sessionStorage.getItem("role");
+        if (!token || !role) { window.location.href = "login.html"; return; }
+        if (Number(role) !== 3) { alert("No autorizado"); window.location.href = "login.html"; return; }
+        await cargarRoles();
+        cargarRolesSelect();
+        await cargarUsuarios();
+        renderizarUsuarios();
+        cargarSelectorDashboards();
+        const filtroRol = document.getElementById('filtro-rol');
+        Object.entries(rolesMap).forEach(([id, name]) => {
+            const opt = document.createElement('option');
+            opt.value = id;
+            opt.textContent = name;
+            filtroRol.appendChild(opt);
+        });
+        // Preload perm map
+        try {
+            const res = await fetch(API_AUTH + '/permissions', { headers: getAuthHeaders() });
+            const perms = await res.json();
+            perms.forEach(p => permMap[p.name] = p.id);
+        } catch(e) {}
+    });
+</script>
+</body>
+</html>

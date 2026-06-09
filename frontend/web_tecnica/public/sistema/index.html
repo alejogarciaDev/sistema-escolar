@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=h, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+                <div class="btn-menu">
+                    <label for="btn-menu">☰</label>
+                </div>
+            </div>
+    <h1 class="nombre-web">Tecnica N1 Nuestra Señora Del Valle Muñiz</h1>
+    <!-- Antes -
+     <a href="login.html">
+       <img id="userIcon" src="profile-default.webp" alt="Perfil" class="profile-icon">
+     </a>
+    -->
+      <div class="menu-overlay" id="menu-overlay">
+    <div class="menu-content">
+      <a href="index.html">Inicio</a>
+      <a href="sistema/index.html">login</a>
+      <!--- <a href="sociallol.html">LolSocial</a> -->
+      <!---<a href="login.html">Iniciar sesion</a> --->
+      <a href="https://discord.gg/dNxq82gVPq">Discord</a>
+    </div>
+  </div>
+   <div class="capa"></div>
+                 <!--	--------------->
+                 <input type="checkbox" id="btn-menu">
+                 <div class="container-menu">
+                  <div class="cont-menu">
+                <nav>
+                    <a href="A.HTML">Inicio</a>
+                    <a href="https://sites.google.com/view/tecnica1nsdv/inicio?authuser=0">Institucion</a>
+                    <a href="html.html">Html</a>
+                    <a href="css.html">Css</a>
+                    <a href="js.html">JavaScrip</a>
+                    <a href="#">contacto</a>
+                </nav>
+                <label for="btn-menu">✖️</label>
+            </div>
+  
+
+    
+       <script>
+    // Menú hamburguesa
+const menuBtn = document.getElementById('menu-btn');
+const menuOverlay = document.getElementById('menu-overlay');
+
+menuBtn.addEventListener('click', () => {
+  menuOverlay.classList.toggle('active');
+});
+
+menuOverlay.addEventListener('click', (e) => {
+  if (e.target === menuOverlay) {
+    menuOverlay.classList.remove('active');
+  }
+});
+</script>
+      
+      
+
+   
+  </header>
+  
+
+    >
+    <main>
+    <div id="resumen">
+    <div class="card">Total herramientas: 17</div>
+    <div class="card">Préstamos activos: 4</div>
+</div>
+<nav>
+    <a href="stock.html">Ver Stock</a>
+    <a href="ingreso.html">Registrar Ingreso</a>
+    <a href="pedidos.html">Préstamos/Devoluciones</a>
+</nav>
+    </main>
+    <footer>
+        <div class="footer-container">
+    <div class="footer-section">
+      <h4>Sobre nosotros</h4>
+      <p >Plataforma para jugadores de League of Legends. Comparte, analiza y mejora tu juego.</p>
+    </div>
+    <div class="footer-section">
+      <h4>Enlaces</h4>
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="https://discord.gg/dNxq82gVPq">Discord</a></li>
+        <li><a href="https://github.com/AlejoG2802?tab=overview&from=2025-11-01&to=2025-11-06">Contacto</a></li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h4>Síguenos</h4>
+      <div class="social-icons">
+        <a href="https://www.facebook.com/profile.php?id=61583436151453"><img src="img/facebook.svg" alt="Facebook"></a>
+        <a href="https://x.com/MidTower_GG"><img src="img/X_icon.svg.png" alt="Twitter"></a>
+        <a href="https://www.instagram.com/midtower.gg/"><img src="img/ig.svg.svg" alt="Instagram"></a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2025 Tu Web LoL. Todos los derechos reservados.</p>
+  </div>
+
+        <p>© 2026 Mi Institución</p>
+
+    </footer>
+     
+    
+</body>
+</html>

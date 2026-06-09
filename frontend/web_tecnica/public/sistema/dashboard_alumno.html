@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Campus Virtual - Alumno</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="shortcut icon" href="media/imagen.ico" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .campus-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .campus-tabs button {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            background: #555;
+            color: #fff;
+            transition: background 0.3s;
+        }
+        .campus-tabs button.active {
+            background: #9b0b0b;
+        }
+        .campus-tabs button:hover {
+            background: #7a0808;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: #333;
+            color: #eee;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #555;
+        }
+        th {
+            background: #9b0b0b;
+            color: white;
+        }
+        td {
+            color: #eee;
+        }
+        .tarea-card {
+            background: #2a2a2a;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #9b0b0b;
+            color: #eee;
+        }
+        .tarea-card h4 {
+            margin: 0 0 5px 0;
+            color: #f0f0f0;
+        }
+        .tarea-card .meta {
+            font-size: 0.85rem;
+            color: #aaa;
+            margin-bottom: 8px;
+        }
+        .tarea-card .meta span {
+            margin-right: 15px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .badge-pendiente { background: #e74c3c; color: white; }
+        .badge-entregado { background: #27ae60; color: white; }
+        .badge-calificado { background: #2980b9; color: white; }
+        .badge-vencida { background: #f39c12; color: white; }
+        .material-card {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            color: #eee;
+            margin-bottom: 10px;
+        }
+        .material-card h4 {
+            margin: 0 0 5px 0;
+            color: #f0f0f0;
+        }
+        .btn-download {
+            display: inline-block;
+            padding: 5px 12px;
+            background: #27ae60;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+        .btn-download:hover {
+            background: #219a52;
+        }
+        .form-inline {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .form-inline select, .form-inline input {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #555;
+            background: #333;
+            color: #eee;
+            flex: 1;
+            min-width: 150px;
+        }
+        .form-inline button {
+            padding: 8px 16px;
+            background: #c0392b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .form-inline button:hover {
+            background: #e74c3c;
+        }
+        .dash-switcher { position:relative; display:inline-block; }
+        .dash-btn { background:#7a0808; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-size:0.85rem; }
+        .dash-btn:hover { background:#5c0606; }
+        .dash-dropdown { display:none; position:absolute; right:0; top:100%; background:#222; border-radius:6px; box-shadow:0 4px 12px rgba(0,0,0,0.4); z-index:1000; min-width:200px; overflow:hidden; }
+        .dash-dropdown.show { display:block; }
+        .dash-dropdown a { display:block; padding:10px 16px; color:#ddd; text-decoration:none; font-size:0.9rem; border-bottom:1px solid #444; }
+        .dash-dropdown a:hover { background:#333; color:#e74c3c; }
+        .dash-dropdown a:last-child { border-bottom:none; }
+        .dash-dropdown .current { background:#3a1515; color:#e74c3c; font-weight:bold; }
+    </style>
+</head>
+<body>
+
+<header class="main-header">
+    <div class="logo-space">
+        <img src="media/logo.png" alt="logo" class="logo-img">
+    </div>
+    <div class="title-header">Escuela Técnica N°1 - Campus Virtual</div>
+    <div class="dash-switcher" style="margin-right:10px;">
+        <button class="dash-btn" onclick="toggleDashDropdown()">⬇ Panel Alumno</button>
+        <div id="dashDropdown" class="dash-dropdown"></div>
+    </div>
+    <div style="margin-right: 10px;">
+        <button onclick="cerrarSesion()" style="background:#6b0707;color:white;border:none;padding:8px 15px;border-radius:5px;cursor:pointer;">Cerrar Sesión</button>
+    </div>
+</header>
+
+<main>
+    <section class="admin-section">
+        <h2>Bienvenido, <span id="nombre-alumno">Alumno</span></h2>
+        <p style="text-align:center;color:#555;">Aquí puedes gestionar tus tareas, entregas y materiales de estudio.</p>
+    </section>
+
+    <div class="campus-tabs" style="padding:0 20px;">
+        <button class="active" onclick="activarTab('tareas-pendientes', this)">Tareas Pendientes</button>
+        <button onclick="activarTab('mis-entregas', this)">Mis Entregas</button>
+        <button onclick="activarTab('materiales', this)">Material de Estudio</button>
+        <button onclick="activarTab('documentos', this)">Mis Documentos</button>
+        <button onclick="activarTab('compartidos', this)">Documentos Compartidos</button>
+    </div>
+
+    <div id="tab-tareas-pendientes" class="tab-content active" style="padding:0 20px;">
+        <section class="admin-section">
+            <h3>Tareas Pendientes</h3>
+            <div class="form-inline" style="margin-bottom:15px;">
+                <select id="filtro-materia-tareas" onchange="cargarTareasPendientes()">
+                    <option value="">Todas las materias</option>
+                </select>
+            </div>
+            <div id="lista-tareas-pendientes">
+                <p style="text-align:center;color:#555;">Cargando tareas...</p>
+            </div>
+        </section>
+    </div>
+
+    <div id="tab-mis-entregas" class="tab-content" style="padding:0 20px;">
+        <section class="admin-section">
+            <h3>Mis Entregas</h3>
+            <table>
+                <thead>
+                    <tr><th>Materia</th><th>Tarea</th><th>Fecha</th><th>Estado</th><th>Nota</th><th>Feedback</th></tr>
+                </thead>
+                <tbody id="tabla-entregas">
+                    <tr><td colspan="6" style="text-align:center;color:#555;">Cargando entregas...</td></tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <div id="tab-materiales" class="tab-content" style="padding:0 20px;">
+        <section class="admin-section">
+            <h3>Material de Estudio</h3>
+            <div class="form-inline" style="margin-bottom:15px;">
+                <select id="filtro-materia-materiales" onchange="cargarMateriales()">
+                    <option value="">Todas las materias</option>
+                </select>
+            </div>
+            <div id="lista-materiales">
+                <p style="text-align:center;color:#555;">Cargando materiales...</p>
+            </div>
+        </section>
+    </div>
+
+    <div id="tab-documentos" class="tab-content" style="padding:0 20px;">
+        <section class="admin-section">
+            <h3>Mis Documentos</h3>
+            <p style="text-align:center;color:#555;">Organizá tus archivos y proyectos personales del colegio.</p>
+
+            <div class="form-inline" style="margin-bottom:15px;">
+                <div id="breadcrumb" style="flex:1;font-size:0.95rem;color:#333;">
+                    <a href="#" onclick="irACarpeta(null);return false;" style="color:#9b0b0b;text-decoration:none;">Raíz</a>
+                </div>
+                <button onclick="mostrarCrearCarpeta()" style="background:#27ae60;">+ Carpeta</button>
+                <label for="file-documento" style="background:#c0392b;color:white;padding:8px 16px;border-radius:5px;cursor:pointer;">Subir Archivo</label>
+                <input type="file" id="file-documento" style="display:none;" onchange="subirDocumento()">
+            </div>
+
+            <div id="crear-carpeta-form" style="display:none;margin-bottom:15px;" class="form-inline">
+                <input type="text" id="nombre-carpeta" placeholder="Nombre de la carpeta" style="flex:1;">
+                <button onclick="crearCarpeta()" style="background:#27ae60;">Crear</button>
+                <button onclick="document.getElementById('crear-carpeta-form').style.display='none'" style="background:#888;">Cancelar</button>
+            </div>
+
+            <div id="lista-documentos">
+                <p style="text-align:center;color:#555;">Cargando documentos...</p>
+            </div>
+        </section>
+    </div>
+
+    <div id="tab-compartidos" class="tab-content" style="padding:0 20px;">
+        <section class="admin-section">
+            <h3>Documentos Compartidos</h3>
+            <p style="text-align:center;color:#555;">Archivos compartidos por profesores y directivos.</p>
+
+            <div id="breadcrumb-compartidos-alumno" style="font-size:0.95rem;color:#333;margin-bottom:12px;">
+                <a href="#" onclick="irACarpetaCompartidaAlumno(null);return false;" style="color:#9b0b0b;text-decoration:none;">Raíz</a>
+            </div>
+            <div id="lista-compartidos-alumno">
+                <p style="text-align:center;color:#555;">Cargando documentos compartidos...</p>
+            </div>
+        </section>
+    </div>
+</main>
+
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-section">
+            <h4>Sobre nosotros</h4>
+            <p>Somos una Institución con más de 75 años formando técnicos</p>
+        </div>
+        <div class="footer-section">
+            <h4>Enlaces</h4>
+            <ul>
+                <li><a href="../index.html">Inicio</a></li>
+                <li><a href="../contacto.html">Contacto</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h4>Síguenos</h4>
+            <div class="social-icons">
+                <a href="#"><img src="../img/facebook.svg" alt="Facebook"></a>
+                <a href="#"><img src="../img/ig.svg" alt="Instagram"></a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2026 Portal Institucional | Desarrollado por <a href="https://github.com/alejogarciaDev" target="_blank">Alejo Técnica</a></p>
+    </div>
+</footer>
+
+<script src="js/config.js"></script>
+<script>
+    const API_AUTH = window.API_AUTH;
+    const API = window.API;
+
+    function getAuthHeaders() {
+        const token = sessionStorage.getItem("token");
+        if (!token) { window.location.href = "login.html"; return {}; }
+        return { "Authorization": "Bearer " + token };
+    }
+
+    function getJsonHeaders() {
+        return { "Content-Type": "application/json", ...getAuthHeaders() };
+    }
+
+    function activarTab(tabId, btn) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.campus-tabs button').forEach(b => b.classList.remove('active'));
+        document.getElementById('tab-' + tabId).classList.add('active');
+        btn.classList.add('active');
+        if (tabId === 'documentos') cargarDocumentos();
+        if (tabId === 'compartidos') cargarDocumentosCompartidosAlumno();
+    }
+
+    function cerrarSesion() {
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("username");
+        sessionStorage.removeItem("userName");
+        window.location.href = "login.html";
+    }
+
+    async function cargarMaterias(selectId) {
+        try {
+            const res = await fetch(API + "/materias/", { headers: getJsonHeaders() });
+            if (res.ok) {
+                const data = await res.json();
+                const select = document.getElementById(selectId);
+                select.innerHTML = '<option value="">Todas las materias</option>';
+                data.forEach(m => { select.innerHTML += '<option value="' + m.id + '">' + m.nombre + '</option>'; });
+            }
+        } catch (err) { console.error(err); }
+    }
+
+    async function cargarTareasPendientes() {
+        const materiaId = document.getElementById('filtro-materia-tareas').value;
+        let url = API + "/campus/tareas/";
+        if (materiaId) url += "?materia_id=" + materiaId;
+        const contenedor = document.getElementById('lista-tareas-pendientes');
+
+        try {
+            const res = await fetch(url, { headers: getJsonHeaders() });
+            if (!res.ok) { contenedor.innerHTML = '<p style="text-align:center;color:#555;">Error al cargar tareas.</p>'; return; }
+            const tareas = await res.json();
+            if (tareas.length === 0) {
+                contenedor.innerHTML = '<p style="text-align:center;color:#555;">No hay tareas disponibles.</p>';
+                return;
+            }
+            let html = '';
+            for (const t of tareas) {
+                const limite = t.fecha_limite ? new Date(t.fecha_limite).toLocaleDateString() : 'Sin fecha';
+                const vencida = t.fecha_limite && new Date(t.fecha_limite) < new Date();
+                html += '<div class="tarea-card">';
+                html += '<h4>' + t.titulo + '</h4>';
+                html += '<div class="meta"><span>📚 ' + (t.materia_nombre || 'Sin materia') + '</span><span>📅 Límite: ' + limite + '</span>';
+                if (vencida) html += '<span class="badge badge-vencida">Vencida</span>';
+                html += '</div>';
+                if (t.descripcion) html += '<p>' + t.descripcion + '</p>';
+                html += '<div class="form-inline" style="margin-top:10px;">';
+                html += '<input type="file" id="file-tarea-' + t.id + '" style="flex:1;padding:6px;">';
+                html += '<button onclick="entregarTarea(' + t.id + ')">Entregar</button>';
+                html += '<span id="msg-tarea-' + t.id + '" style="font-size:0.85rem;"></span>';
+                html += '</div></div>';
+            }
+            contenedor.innerHTML = html;
+        } catch (err) { console.error(err); contenedor.innerHTML = '<p style="text-align:center;color:#555;">Error al cargar tareas.</p>'; }
+    }
+
+    async function entregarTarea(tareaId) {
+        const fileInput = document.getElementById('file-tarea-' + tareaId);
+        const msg = document.getElementById('msg-tarea-' + tareaId);
+        if (!fileInput.files.length) { msg.textContent = 'Selecciona un archivo'; msg.style.color = 'red'; return; }
+
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+        formData.append('comentario', '');
+        msg.textContent = 'Subiendo...'; msg.style.color = '#333';
+
+        try {
+            const res = await fetch(API + '/campus/tareas/' + tareaId + '/entregar', {
+                method: 'POST', headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') }, body: formData
+            });
+            if (res.ok) {
+                msg.textContent = '¡Entregado con éxito!'; msg.style.color = 'green';
+                fileInput.value = '';
+                cargarTareasPendientes();
+                cargarMisEntregas();
+            } else {
+                const err = await res.json();
+                msg.textContent = err.detail || 'Error al entregar'; msg.style.color = 'red';
+            }
+        } catch (err) { console.error(err); msg.textContent = 'Error de conexión'; msg.style.color = 'red'; }
+    }
+
+    async function cargarMisEntregas() {
+        const tabla = document.getElementById('tabla-entregas');
+        try {
+            const res = await fetch(API + '/campus/mis-entregas', { headers: getJsonHeaders() });
+            if (!res.ok) { tabla.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#555;">Error al cargar entregas.</td></tr>'; return; }
+            const entregas = await res.json();
+            if (entregas.length === 0) {
+                tabla.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#555;">Aún no has entregado ningún trabajo.</td></tr>';
+                return;
+            }
+            tabla.innerHTML = '';
+            entregas.forEach(e => {
+                const estado = e.calificado
+                    ? '<span class="badge badge-calificado">Calificado</span>'
+                    : '<span class="badge badge-entregado">Entregado</span>';
+                const nota = e.nota !== null && e.nota !== undefined ? e.nota : '-';
+                const feedback = e.feedback || '-';
+                tabla.innerHTML += '<tr><td>' + (e.materia_nombre || 'Sin materia') + '</td><td>' + (e.tarea_titulo || 'Sin título') + '</td><td>' + new Date(e.fecha_entrega).toLocaleDateString() + '</td><td>' + estado + '</td><td><strong>' + nota + '</strong></td><td>' + feedback + '</td></tr>';
+            });
+        } catch (err) { console.error(err); tabla.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#555;">Error al cargar entregas.</td></tr>'; }
+    }
+
+    async function cargarMateriales() {
+        const materiaId = document.getElementById('filtro-materia-materiales').value;
+        let url = API + '/campus/materiales/';
+        if (materiaId) url += '?materia_id=' + materiaId;
+        const contenedor = document.getElementById('lista-materiales');
+
+        try {
+            const res = await fetch(url, { headers: getJsonHeaders() });
+            if (!res.ok) { contenedor.innerHTML = '<p style="text-align:center;color:#555;">Error al cargar materiales.</p>'; return; }
+            const materiales = await res.json();
+            if (materiales.length === 0) {
+                contenedor.innerHTML = '<p style="text-align:center;color:#555;">No hay materiales de estudio disponibles.</p>';
+                return;
+            }
+            let html = '';
+            materiales.forEach(m => {
+                const fecha = new Date(m.created_at).toLocaleDateString();
+                html += '<div class="material-card">';
+                html += '<h4>' + m.titulo + '</h4>';
+                html += '<div style="font-size:0.85rem;color:#666;margin-bottom:5px;">📚 ' + (m.materia_nombre || '') + ' | 📅 ' + fecha + '</div>';
+                if (m.descripcion) html += '<p>' + m.descripcion + '</p>';
+                if (m.archivo_id) html += '<a href="' + API + '/archivos/descargar/' + m.archivo_id + '" target="_blank" class="btn-download">Descargar</a>';
+                html += '</div>';
+            });
+            contenedor.innerHTML = html;
+        } catch (err) { console.error(err); contenedor.innerHTML = '<p style="text-align:center;color:#555;">Error al cargar materiales.</p>'; }
+    }
+
+    let carpetaActual = null;
+
+    function mostrarCrearCarpeta() {
+        document.getElementById('crear-carpeta-form').style.display = 'flex';
+    }
+
+    async function crearCarpeta() {
+        const nombre = document.getElementById('nombre-carpeta').value;
+        if (!nombre) { alert('Ingresa un nombre'); return; }
+        let url = API + '/campus/misdocumentos/carpeta?nombre=' + encodeURIComponent(nombre);
+        if (carpetaActual) url += '&carpeta_padre_id=' + carpetaActual;
+        try {
+            const res = await fetch(url, { method: 'POST', headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') } });
+            if (res.ok) {
+                document.getElementById('nombre-carpeta').value = '';
+                document.getElementById('crear-carpeta-form').style.display = 'none';
+                cargarDocumentos();
+            } else {
+                const err = await res.json();
+                alert(err.detail || 'Error al crear carpeta');
+            }
+        } catch (err) { alert('Error de conexión'); }
+    }
+
+    async function subirDocumento() {
+        const fileInput = document.getElementById('file-documento');
+        if (!fileInput.files.length) return;
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+        if (carpetaActual) formData.append('carpeta_padre_id', carpetaActual);
+        try {
+            const res = await fetch(API + '/campus/misdocumentos/subir', {
+                method: 'POST', headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') }, body: formData
+            });
+            if (res.ok) {
+                fileInput.value = '';
+                cargarDocumentos();
+            } else {
+                const err = await res.json();
+                alert(err.detail || 'Error al subir archivo');
+            }
+        } catch (err) { alert('Error de conexión'); }
+    }
+
+    async function cargarDocumentos() {
+        const contenedor = document.getElementById('lista-documentos');
+        let url = API + '/campus/misdocumentos/';
+        if (carpetaActual) url += '?carpeta_id=' + carpetaActual;
+        try {
+            const res = await fetch(url, { headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') } });
+            if (!res.ok) { contenedor.innerHTML = '<p style="text-align:center;color:#555;">Error al cargar.</p>'; return; }
+            const data = await res.json();
+            renderizarRuta(data.ruta);
+            if (data.contenido.length === 0) {
+                contenedor.innerHTML = '<p class="empty-folder">Esta carpeta está vacía.</p>';
+                return;
+            }
+            let html = '<div class="doc-grid">';
+            data.contenido.forEach(doc => {
+                if (doc.es_carpeta) {
+                    html += '<div class="doc-item folder" onclick="irACarpeta(' + doc.id + ')">';
+                    html += '<div class="doc-icon">📁</div>';
+                    html += '<span class="doc-name">' + doc.nombre + '</span>';
+                    html += '<div class="doc-actions">';
+                    html += '<button class="btn-delete" onclick="event.stopPropagation();eliminarDocumento(' + doc.id + ')">Eliminar</button>';
+                    html += '</div></div>';
+                } else {
+                    html += '<div class="doc-item">';
+                    html += '<div class="doc-icon">📄</div>';
+                    html += '<span class="doc-name">' + doc.nombre + '</span>';
+                    html += '<div class="doc-actions">';
+                    html += '<a href="' + API + '/archivos/descargar/' + doc.archivo_id + '" target="_blank" class="btn-download">Descargar</a>';
+                    html += '<button class="btn-delete" onclick="eliminarDocumento(' + doc.id + ')">Eliminar</button>';
+                    html += '</div></div>';
+                }
+            });
+            html += '</div>';
+            contenedor.innerHTML = html;
+        } catch (err) { contenedor.innerHTML = '<p style="text-align:center;color:#555;">Error al cargar.</p>'; }
+    }
+
+    function renderizarRuta(ruta) {
+        const el = document.getElementById('breadcrumb');
+        let html = '<a href="#" onclick="irACarpeta(null);return false;" style="color:#9b0b0b;text-decoration:none;">Raíz</a>';
+        ruta.forEach(p => {
+            html += ' / <a href="#" onclick="irACarpeta(' + p.id + ');return false;" style="color:#9b0b0b;text-decoration:none;">' + p.nombre + '</a>';
+        });
+        el.innerHTML = html;
+    }
+
+    function irACarpeta(id) {
+        carpetaActual = id;
+        cargarDocumentos();
+    }
+
+    async function eliminarDocumento(docId) {
+        if (!confirm('¿Eliminar este elemento?')) return;
+        try {
+            const res = await fetch(API + '/campus/misdocumentos/' + docId, {
+                method: 'DELETE', headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') }
+            });
+            if (res.ok) { cargarDocumentos(); }
+            else { const err = await res.json(); alert(err.detail || 'Error'); }
+        } catch (err) { alert('Error de conexión'); }
+    }
+
+    // ================= DOCUMENTOS COMPARTIDOS (ALUMNO) =================
+    let carpetaCompartidaAlumno = null;
+
+    async function cargarDocumentosCompartidosAlumno() {
+        const contenedor = document.getElementById('lista-compartidos-alumno');
+        let url = API + '/campus/compartidos/';
+        if (carpetaCompartidaAlumno) url += '?carpeta_id=' + carpetaCompartidaAlumno;
+        try {
+            const res = await fetch(url, { headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') } });
+            if (!res.ok) { contenedor.innerHTML = '<p style="text-align:center;color:#555;">Error al cargar.</p>'; return; }
+            const data = await res.json();
+            renderizarRutaCompartidaAlumno(data.ruta);
+            if (data.contenido.length === 0) {
+                contenedor.innerHTML = '<p class="empty-folder">Esta carpeta está vacía.</p>';
+                return;
+            }
+            let html = '<div class="doc-grid">';
+            data.contenido.forEach(doc => {
+                if (doc.es_carpeta) {
+                    html += '<div class="doc-item folder" onclick="irACarpetaCompartidaAlumno(' + doc.id + ')">';
+                    html += '<div class="doc-icon">📁</div>';
+                    html += '<span class="doc-name">' + doc.nombre + '</span>';
+                    html += '</div>';
+                } else {
+                    html += '<div class="doc-item">';
+                    html += '<div class="doc-icon">📄</div>';
+                    html += '<span class="doc-name">' + doc.nombre + '</span>';
+                    html += '<div class="doc-actions">';
+                    html += '<a href="' + API + '/archivos/descargar/' + doc.archivo_id + '" target="_blank" class="btn-download">Descargar</a>';
+                    html += '</div></div>';
+                }
+            });
+            html += '</div>';
+            contenedor.innerHTML = html;
+        } catch (err) { contenedor.innerHTML = '<p style="text-align:center;color:#555;">Error al cargar.</p>'; }
+    }
+
+    function renderizarRutaCompartidaAlumno(ruta) {
+        const el = document.getElementById('breadcrumb-compartidos-alumno');
+        let html = '<a href="#" onclick="irACarpetaCompartidaAlumno(null);return false;" style="color:#9b0b0b;text-decoration:none;">Raíz</a>';
+        ruta.forEach(p => {
+            html += ' / <a href="#" onclick="irACarpetaCompartidaAlumno(' + p.id + ');return false;" style="color:#9b0b0b;text-decoration:none;">' + p.nombre + '</a>';
+        });
+        el.innerHTML = html;
+    }
+
+    function irACarpetaCompartidaAlumno(id) {
+        carpetaCompartidaAlumno = id;
+        cargarDocumentosCompartidosAlumno();
+    }
+
+    // ================= SELECTOR DE DASHBOARDS =================
+    const CURRENT_DASHBOARD = "alumno";
+
+    function toggleDashDropdown() {
+        document.getElementById('dashDropdown').classList.toggle('show');
+    }
+
+    document.addEventListener('click', function(e) {
+        const sw = document.querySelector('.dash-switcher');
+        if (sw && !sw.contains(e.target)) {
+            document.getElementById('dashDropdown').classList.remove('show');
+        }
+    });
+
+    async function cargarSelectorDashboards() {
+        try {
+            const res = await fetch(API_AUTH + '/auth/mis-dashboards', { headers: getAuthHeaders() });
+            if (!res.ok) return;
+            const dashboards = await res.json();
+            const dd = document.getElementById('dashDropdown');
+            dd.innerHTML = '';
+            dashboards.forEach(d => {
+                if (d.id === CURRENT_DASHBOARD) {
+                    dd.innerHTML += '<a href="#" class="current">✅ ' + d.label + '</a>';
+                } else {
+                    dd.innerHTML += '<a href="' + d.url + '">➡ ' + d.label + '</a>';
+                }
+            });
+        } catch (e) {}
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const token = sessionStorage.getItem("token");
+        if (!token) { window.location.href = "login.html"; return; }
+        document.getElementById("nombre-alumno").textContent = sessionStorage.getItem("name") || sessionStorage.getItem("username") || "Alumno";
+        cargarMaterias('filtro-materia-tareas');
+        cargarMaterias('filtro-materia-materiales');
+        cargarTareasPendientes();
+        cargarMisEntregas();
+        cargarMateriales();
+        cargarSelectorDashboards();
+    });
+</script>
+</body>
+</html>

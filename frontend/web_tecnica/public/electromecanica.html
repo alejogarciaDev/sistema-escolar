@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Portal Institucional</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="shortcut icon" href="media/imagen.ico" type="image/x-icon">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <header class="main-header">
+    <!-- Espacio para imagen futura -->
+    <div class="logo-space" >
+        <img src="media/logo.png" alt="logo" class="logo-img">
+    </div>
+
+    <!-- Título centrado -->
+    <div class="title-header">Escuela Técnica N°1 Nuestra Señora del Valle</div>
+
+    <!-- Botón hamburguesa -->
+    <button class="hamburger-btn" id="hamburgerBtn">☰</button>
+
+    <!-- Menú overlay -->
+    <div id="fullscreenMenu" class="fullscreen-menu-header">
+        <a href="index.html">Inicio</a>
+        <a href="temario.html">Termario</a>
+        <a href="sistema/login.html ">sesion</a>
+        <a href="normativa.html">Normativa</a>
+        <a href="#">Cerrar</a>
+    </div>
+    <script>
+    const hamburgerBtn = document.getElementById("hamburgerBtn");
+    const fullscreenMenu = document.getElementById("fullscreenMenu");
+
+    hamburgerBtn.addEventListener("click", () => {
+        fullscreenMenu.classList.toggle("show");
+    });
+
+    // Cerrar menú al tocar cualquier enlace
+    fullscreenMenu.querySelectorAll("a").forEach(link => {
+        link.addEventListener("click", () => {
+            fullscreenMenu.classList.remove("show");
+        });
+    });
+
+    // Cerrar menú si clic fuera de los enlaces
+    fullscreenMenu.addEventListener("click", (e) => {
+        if(e.target === fullscreenMenu){
+            fullscreenMenu.classList.remove("show");
+        }
+    });
+   </script>
+   </header>
+ 
+<main class="main">
+
+  <!-- HERO -->
+  <section class="hero hero-modern" id="hero-electro">
+    <div class="hero-bg" style="background-image:url('media/hero-electro.png');"></div>
+    <div class="hero-content">
+        <h1>Área de Electromecánica</h1>
+        <p class="subtitle">Tecnología, industria y producción</p>
+        <p class="desc">Formación técnica en electricidad, mecánica y automatización, preparando estudiantes para el mundo industrial.</p>
+        <a href="#intro" class="hero-cta">Conoce más</a>
+    </div>
+  </section>
+
+  <!-- INTRO -->
+  <section id="intro" class="info container">
+    <h2>¿Por qué estudiar electromecánica?</h2>
+    <p style="font-size: 1.15rem; line-height: 1.8; text-align: center; max-width: 850px; margin: 0 auto 20px; color: #444;">
+      La electromecánica es la columna vertebral de la producción moderna. Nuestra propuesta educativa integra el dominio de sistemas eléctricos, dispositivos mecánicos y tecnologías de control automatizado para capacitarte de forma integral en el diseño y resolución de sistemas industriales complejos.
+    </p>
+    <p style="font-size: 1.1rem; line-height: 1.8; text-align: center; max-width: 850px; margin: 0 auto; color: #666; font-weight: 300;">
+      Aprender electromecánica significa entender la interacción entre la energía eléctrica y el movimiento mecánico, combinando clases analíticas con un fuerte trabajo de taller con maquinaria industrial real, forjando destrezas prácticas inigualables y un alto sentido de la seguridad ocupacional.
+    </p>
+  </section>
+
+  <!-- FORMACIÓN -->
+  <section class="destacado">
+    <div class="container">
+      <h2>Formación técnica</h2>
+
+      <div class="cards">
+
+        <a href="#electricidad" class="card">
+          <div class="icon">⚡</div>
+          <h3>Electricidad</h3>
+          <p>Instalaciones eléctricas y circuitos.</p>
+        </a>
+
+        <a href="#mecanica" class="card">
+          <div class="icon">⚙️</div>
+          <h3>Tornería</h3>
+          <p>Trabajo con máquinas y piezas mecánicas.</p>
+        </a>
+
+        <a href="#soldadura" class="card">
+          <div class="icon">🔥</div>
+          <h3>Soldadura</h3>
+          <p>Unión de materiales y estructuras.</p>
+        </a>
+
+        <a href="#diseno3d" class="card">
+          <div class="icon">🖨️</div>
+          <h3>Diseño 3D</h3>
+          <p>Modelado e impresión de piezas.</p>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+<!-- APRENDIZAJE BASADO EN PROYECTOS -->
+<section class="robotica">
+    <div class="container">
+        <h2>Aprendizaje basado en proyectos</h2>
+        <p class="robot-desc">
+            Los estudiantes aplican sus conocimientos en proyectos reales, integrando electricidad,
+            mecánica y automatización para resolver desafíos industriales.
+        </p>
+        <div class="cards cards-horizontal">
+            <div class="card">
+                <h3>🔌 Instalaciones Eléctricas</h3>
+                <p>Diseño y montaje de circuitos industriales y sistemas de distribución.</p>
+            </div>
+            <div class="card">
+                <h3>⚙️ Mecánica de Precisión</h3>
+                <p>Fabricación y ensamblaje de componentes mecánicos con alta exactitud.</p>
+            </div>
+            <div class="card">
+                <h3>🏭 Automatización Industrial</h3>
+                <p>Programación de PLCs y desarrollo de sistemas de control automatizado.</p>
+            </div>
+            <div class="card">
+                <h3>🧰 Mantenimiento Preventivo</h3>
+                <p>Diagnóstico, inspección y reparación de equipos para garantizar continuidad.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECCIONES DETALLADAS DE ELECTROMECÁNICA -->
+<section id="electricidad" class="detalle">
+    <div class="container detalle-flex">
+        <div class="detalle-texto">
+            <h2>Electricidad Industrial</h2>
+            <p>
+                Los alumnos aprenden el diseño, montaje y mantenimiento de circuitos eléctricos de baja y media tensión, sistemas de iluminación y tableros de comando industrial.
+            </p>
+            <p>
+                Se trabaja bajo normas vigentes de seguridad eléctrica, uso de instrumental y dimensionamiento de cables y protecciones térmicas y magnéticas.
+            </p>
+        </div>
+        <img src="imagenes/electricidad.png" alt="Electricidad Industrial">
+    </div>
+</section>
+
+<section id="mecanica" class="detalle">
+    <div class="container detalle-flex">
+        <img src="imagenes/torneria.png" alt="Mecanizado y Tornería">
+        <div class="detalle-texto">
+            <h2>Mecanizado y Tornería</h2>
+            <p>
+                Formación práctica en el uso de tornos paralelos, fresadoras, limadoras y herramientas de banco para la producción y reparación de piezas mecánicas de precisión.
+            </p>
+            <p>
+                Se estudian tolerancias geométricas, metrología avanzada, interpretación de planos técnicos e higiene y seguridad industrial en talleres mecánicos.
+            </p>
+        </div>
+    </div>
+</section>
+
+<section id="automatizacion" class="detalle">
+    <div class="container detalle-flex">
+        <div class="detalle-texto">
+            <h2>Automatización y PLCs</h2>
+            <p>
+                Introducción a los sistemas de control automático y lógica cableada y programable (PLCs). Los estudiantes desarrollan proyectos de neumática e hidráulica aplicadas.
+            </p>
+            <p>
+                Ideal para comprender los procesos productivos modernos y el control de motores eléctricos mediante variadores de frecuencia y sensores industriales.
+            </p>
+        </div>
+        <img src="imagenes/automatizacion.png" alt="Automatización y Control">
+    </div>
+</section>
+
+<section id="soldadura" class="detalle">
+    <div class="container detalle-flex">
+        <img src="imagenes/soldadura.png" alt="Soldadura y Estructuras">
+        <div class="detalle-texto">
+            <h2>Soldadura y Estructuras Metálicas</h2>
+            <p>
+                Capacitación en técnicas de unión de materiales metálicos utilizando soldadura eléctrica por arco (electrodo revestido) y sistemas semiautomáticos (MIG/MAG).
+            </p>
+            <p>
+                Enfoque riguroso en el uso de equipamiento de protección personal, técnicas de trazado, corte de metales y ensamblaje seguro de estructuras.
+            </p>
+        </div>
+    </div>
+</section>
+
+<section id="diseno3d" class="detalle">
+    <div class="container detalle-flex">
+        <div class="detalle-texto">
+            <h2>Diseño Técnico y Prototipado 3D</h2>
+            <p>
+                Modelado en software CAD (Diseño Asistido por Computadora) para concebir piezas tridimensionales y planos técnicos estandarizados.
+            </p>
+            <p>
+                Los diseños se materializan utilizando impresoras 3D del taller escolar, permitiendo fabricar prototipos funcionales y piezas mecánicas a medida.
+            </p>
+        </div>
+        <img src="imagenes/diseno3d.png" alt="Impresión 3D y CAD">
+    </div>
+</section>
+
+
+  <!-- SALIDA LABORAL -->
+  <section class="info container">
+    <h2>Salida laboral y Futuro Profesional</h2>
+    <p style="text-align: center; max-width: 700px; margin: 0 auto 30px; font-size: 1.1rem; color: #555; line-height: 1.7;">
+      Los técnicos electromecánicos egresados de nuestra escuela técnica adquieren un perfil altamente versátil y valorado, lo que les permite insertarse rápidamente en el ámbito industrial o emprender sus propios proyectos.
+    </p>
+
+    <div class="salida-laboral-grid">
+      <div class="salida-card">
+        <span class="salida-icon">🏭</span>
+        <h3>Industria y Manufactura</h3>
+        <p>Operación, supervisión y mantenimiento de líneas de producción automatizadas e instalaciones industriales complejas.</p>
+      </div>
+      <div class="salida-card">
+        <span class="salida-icon">🔌</span>
+        <h3>Instalaciones y Redes</h3>
+        <p>Diseño y ejecución de proyectos eléctricos comerciales e industriales, y control de tableros de comando.</p>
+      </div>
+      <div class="salida-card">
+        <span class="salida-icon">⚙️</span>
+        <h3>Sistemas Mecánicos</h3>
+        <p>Mecanizado de piezas, mantenimiento de motores y diseño de sistemas mecánicos integrados.</p>
+      </div>
+      <div class="salida-card">
+        <span class="salida-icon">🎓</span>
+        <h3>Estudios Superiores</h3>
+        <p>Base sólida para continuar carreras universitarias como Ingeniería Electromecánica, Industrial o Mecánica.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+    <footer class="footer">
+    <div class="footer-container">
+        <div class="footer-section">
+            <h4>🏫 E.E.S.T. N°1 Muñiz</h4>
+            <p>Escuela de Educación Secundaria Técnica N°1 "Nuestra Señora del Valle".<br>Institución pública estatal con más de 75 años formando técnicos.</p>
+        </div>
+        <div class="footer-section">
+            <h4>🔗 Navegación</h4>
+            <ul>
+                <li><a href="index.html">🏠 Inicio</a></li>
+                <li><a href="temario.html">📋 Temario</a></li>
+                <li><a href="normativa.html">📜 Normativa</a></li>
+                <li><a href="informatica.html">💻 Informática</a></li>
+                <li><a href="electromecanica.html">⚙️ Electromecánica</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h4>📞 Contacto</h4>
+            <ul>
+                <li>📍 Farías 480, Muñiz</li>
+                <li>🏙️ San Miguel, Bs. As.</li>
+                <li>📞 (011) 4664-0516</li>
+                <li>📅 Fundada en 1949</li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2026 E.E.S.T. N°1 Muñiz — Portal Institucional |
+            Desarrollado por <a href="https://github.com/alejogarciaDev" target="_blank" class="dev-name">Alejo García</a>
+        </p>
+    </div>
+</footer>
+    <script>
+  let index = 0;
+  const images = document.querySelectorAll(".carousel img");
+
+  setInterval(() => {
+    images[index].classList.remove("active");
+    index = (index + 1) % images.length;
+    images[index].classList.add("active");
+  }, 3000);
+</script>
+</body>
+</html>

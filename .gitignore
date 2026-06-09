@@ -1,0 +1,20 @@
+venv/
+__pycache__/
+*.pyc
+.env
+.vscode/
+*.log
+logs/
+node_modules/
+.DS_Store
+
+# Web cache / downloaded resources (junk)
+*_files/
+saved_resource*
+
+# Backups
+*.save
+*.save.*
+*copia1.py
+*modificado2.py
+

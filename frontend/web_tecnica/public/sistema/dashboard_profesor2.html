@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Portal Institucional</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="shortcut icon" href="media/imagen.ico" type="image/x-icon">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body class="page">
+
+    <header class="main-header">
+        <div class="logo-space">
+            <img src="media/logo.png" alt="logo" class="logo-img">
+        </div>
+
+        <div class="title-header">
+            Escuela Técnica N°1 Nuestra Señora del Valle
+        </div>
+
+        <button class="hamburger-btn" id="hamburgerBtn">☰</button>
+
+        <div id="fullscreenMenu" class="fullscreen-menu-header">
+            <a href="../index.html">Inicio</a>
+            <a href="../temario.html">Temario</a>
+            <a href="sistema/login.html">Sesión</a>
+            <a href="../normativa.html">Normativa</a>
+            <a href="#">Cerrar</a>
+        </div>
+    </header>
+
+    <div class="page-wrapper">
+
+        <main class="container">
+
+            <section class="admin-section">
+                <h2>Panel del Profesor</h2>
+                <p style="text-align:center;color: rgb(53, 48, 48);">
+                    Solicite herramientas y gestione sus pedidos activos
+                </p>
+            </section>
+
+            <section class="admin-section">
+                <h3>Solicitar herramientas</h3>
+
+                <div class="form-group">
+                    <select id="categoria"></select>
+                    <input type="number" id="cantidad" min="1" value="1">
+                    <button onclick="pedirHerramientas()">Solicitar</button>
+                </div>
+
+                <p id="mensaje"></p>
+            </section>
+
+            <section class="admin-section">
+                <h3>Mis Pedidos (En proceso)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID Pedido</th>
+                            <th>Estado</th>
+                            <th>Detalle</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-pedidos"></tbody>
+                </table>
+            </section>
+
+            <section class="admin-section">
+                <h3>Mis herramientas en uso</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Herramienta</th>
+                            <th>Categoría</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-activos"></tbody>
+                </table>
+            </section>
+
+        </main>
+
+    </div>
+
+    <footer class="footer">
+        <div class="footer-container">
+
+            <div class="footer-section">
+                <h4>Sobre nosotros</h4>
+                <p>Somos una Institución con más de 75 años formando técnicos</p>
+            </div>
+
+            <div class="footer-section">
+                <h4>Enlaces</h4>
+                <ul>
+                    <li><a href="../index.html">Inicio</a></li>
+                    <li><a href="../contacto.html">Contacto</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Síguenos</h4>
+                <div class="social-icons">
+                    <a href="#"><img src="img/facebook.svg" alt="Facebook"></a>
+                    <a href="#"><img src="img/ig.svg" alt="Instagram"></a>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <p>
+                © 2026 Portal Institucional |
+                Desarrollado por
+                <a href="https://github.com/alejogarciaDev" target="_blank">Alejo Técnica</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Audio para notificación (archivo de prueba genérico usando data URI) -->
+    <audio id="notificationSound" preload="auto">
+        <source src="data:audio/mp3;base64,//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq" type="audio/mpeg">
+    </audio>
+
+    <script>
+
+        const API = "http://192.168.1.37:8001";
+        let categoryStock = {}; // Store available stock for validation
+        let categoriesMap = {}; // Map to store names
+
+        // Estado anterior de pedidos para notificaciones
+        let lastOrderStates = {};
+
+        // Reproducir sonido genérico usando Web Audio API
+        function playNotificationSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // 880Hz A5
+                oscillator.frequency.exponentialRampToValueAtTime(1760, audioCtx.currentTime + 0.1);
+                
+                gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+                gainNode.gain.linearRampToValueAtTime(1, audioCtx.currentTime + 0.05);
+                gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                oscillator.start(audioCtx.currentTime);
+                oscillator.stop(audioCtx.currentTime + 0.3);
+            } catch(e) {
+                console.error("Audio no soportado o bloqueado por el navegador", e);
+            }
+        }
+
+        // ================= AUTH =================
+        function getAuthHeaders() {
+            const token = sessionStorage.getItem("token");
+
+            if (!token) {
+                window.location.href = "login.html";
+                return {};
+            }
+
+            return {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            };
+        }
+
+        // ================= INIT =================
+        document.addEventListener("DOMContentLoaded", () => {
+
+            const token = sessionStorage.getItem("token");
+            if (!token) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            cargarCategorias();
+            cargarPrestamos();
+            cargarPedidos();
+
+            // Auto-actualizar cada 5 segundos
+            setInterval(() => {
+                cargarCategorias();
+                cargarPrestamos();
+                cargarPedidos();
+            }, 5000);
+        });
+
+        // ================= CATEGORIAS Y STOCK =================
+        async function cargarCategorias() {
+            try {
+                const res = await fetch(`${API}/categories/summary`, {
+                    headers: getAuthHeaders()
+                });
+
+                if (!res.ok) {
+                    console.error(await res.text());
+                    return;
+                }
+
+                const data = await res.json();
+
+                const select = document.getElementById("categoria");
+                select.innerHTML = '<option value="">Seleccionar categoría</option>';
+
+                data.forEach(cat => {
+                    // Guardar stock disponible para validación
+                    categoryStock[cat.category_id] = cat.available;
+                    categoriesMap[cat.category_id] = cat.category_name;
+
+                    // Mostrar también cuántos hay disponibles en el desplegable
+                    select.innerHTML += `<option value="${cat.category_id}">${cat.category_name} (Disponibles: ${cat.available})</option>`;
+                });
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // ================= PEDIR HERRAMIENTAS (FIX REAL) =================
+        async function pedirHerramientas() {
+
+            const categoria = document.getElementById("categoria").value;
+            const cantidad = parseInt(document.getElementById("cantidad").value);
+            const msg = document.getElementById("mensaje");
+
+            if (!categoria) {
+                msg.textContent = "Seleccioná una categoría";
+                msg.style.color = "red";
+                return;
+            }
+
+            const available = categoryStock[parseInt(categoria)] || 0;
+
+            if (cantidad > available) {
+                msg.textContent = `❌ Error: Solo hay ${available} disponibles de esta categoría.`;
+                msg.style.color = "red";
+                return;
+            }
+
+            msg.textContent = "Creando pedido...";
+            msg.style.color = "black";
+
+            try {
+                const res = await fetch(`${API}/orders/`, {
+                    method: "POST",
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({
+                        items: [
+                            {
+                                category_id: parseInt(categoria),
+                                quantity: cantidad
+                            }
+                        ]
+                    })
+                });
+
+                if (!res.ok) {
+                    throw new Error(await res.text());
+                }
+
+                msg.textContent = "✔ Pedido creado correctamente";
+                msg.style.color = "green";
+
+            } catch (err) {
+                console.error(err);
+                msg.textContent = "Error al crear pedido";
+                msg.style.color = "red";
+            }
+        }
+
+        // ================= PRESTAMOS =================
+        async function cargarPrestamos() {
+
+            try {
+                const res = await fetch(`${API}/loans/active/by-professor`, {
+                    headers: getAuthHeaders()
+                });
+
+                if (!res.ok) {
+                    console.error(await res.text());
+                    return;
+                }
+
+                const data = await res.json();
+
+                const tabla = document.getElementById("tabla-activos");
+                tabla.innerHTML = "";
+
+                if (!data.length) {
+                    tabla.innerHTML = `<tr><td colspan="3">No hay préstamos activos</td></tr>`;
+                    return;
+                }
+
+                data.forEach(item => {
+
+                    const profesor = item.profesor;
+
+                    item.tools.forEach(tool => {
+                        tabla.innerHTML += `
+                    <tr>
+                        <td>${tool.barcode}</td>
+                        <td>${tool.category}</td>
+                        <td>Entregado/Activo</td>
+                    </tr>
+                `;
+                    });
+                });
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // ================= PEDIDOS (EN PROCESO) =================
+        async function cargarPedidos() {
+            try {
+                const res = await fetch(`${API}/orders/my`, {
+                    headers: getAuthHeaders()
+                });
+
+                if (!res.ok) {
+                    console.error(await res.text());
+                    return;
+                }
+
+                const data = await res.json();
+                const tabla = document.getElementById("tabla-pedidos");
+                tabla.innerHTML = "";
+
+                // Filtrar los que no están entregados (entregados se ven en prestamos activos)
+                const pendingOrders = data.filter(o => o.status !== "entregado");
+
+                if (!pendingOrders.length) {
+                    tabla.innerHTML = `<tr><td colspan="3">No hay pedidos pendientes</td></tr>`;
+                    return;
+                }
+
+                pendingOrders.forEach(o => {
+                    // Check state change for notification
+                    if (lastOrderStates[o.id] && lastOrderStates[o.id] === 'pendiente' && o.status === 'preparado') {
+                        // Play sound and alert
+                        playNotificationSound();
+                        const msg = document.getElementById("mensaje");
+                        msg.textContent = `¡Tu pedido #${o.id} está listo para retirar en el pañol!`;
+                        msg.style.color = "green";
+                        msg.style.fontWeight = "bold";
+                        setTimeout(() => { msg.textContent = ""; msg.style.fontWeight="normal"; }, 10000); // clear after 10s
+                    }
+                    lastOrderStates[o.id] = o.status;
+
+                    let itemsHTML = o.items.map(i => {
+                        const catName = categoriesMap[i.category_id] || `Categoría ${i.category_id}`;
+                        return `${i.quantity}x ${catName}`;
+                    }).join(", ");
+
+                    let estadoStyle = o.status === "pendiente" ? "color: #ffc107; font-weight: bold;" : "color: #28a745; font-weight: bold;";
+                    let estadoTexto = o.status === "pendiente" ? "Pendiente" : "Listo para retirar (Preparado)";
+
+                    tabla.innerHTML += `
+                        <tr>
+                            <td>#${o.id}</td>
+                            <td style="${estadoStyle}">${estadoTexto}</td>
+                            <td>${itemsHTML}</td>
+                        </tr>
+                    `;
+                });
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+    </script>
+
+
+</body>
+
+</html>

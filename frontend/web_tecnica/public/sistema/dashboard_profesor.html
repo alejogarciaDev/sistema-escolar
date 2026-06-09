@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Portal Institucional - Profesor</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="shortcut icon" href="media/imagen.ico" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .panol-select,
+        .panol-input {
+            padding: 8px 10px;
+            border-radius: 5px;
+            border: 1px solid #555;
+            background: #333;
+            color: #eee;
+            font-size: 14px;
+            outline: none;
+            transition: border 0.2s;
+        }
+        .panol-select:focus,
+        .panol-input:focus {
+            border-color: #9b0b0b;
+        }
+        .panol-btn {
+            background: #c0392b;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .panol-btn:hover {
+            background: #e74c3c;
+        }
+        .compartidos-toolbar {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 0;
+            padding: 12px 16px;
+            background: #2a2a2a;
+            border-radius: 8px 8px 0 0;
+        }
+        .compartidos-body {
+            background: #333;
+            padding: 16px;
+            border-radius: 0 0 8px 8px;
+        }
+        .permiso-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #9b0b0b;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin: 2px;
+        }
+        .permiso-tag button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 0;
+            line-height: 1;
+        }
+        .permiso-selector {
+            background: #2a2a2a;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            margin: 10px 0;
+        }
+        .dash-switcher { position:relative; display:inline-block; }
+        .dash-btn { background:#7a0808; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-size:0.85rem; }
+        .dash-btn:hover { background:#5c0606; }
+        .dash-dropdown { display:none; position:absolute; right:0; top:100%; background:#222; border-radius:6px; box-shadow:0 4px 12px rgba(0,0,0,0.4); z-index:1000; min-width:200px; overflow:hidden; }
+        .dash-dropdown.show { display:block; }
+        .dash-dropdown a { display:block; padding:10px 16px; color:#ddd; text-decoration:none; font-size:0.9rem; border-bottom:1px solid #444; }
+        .dash-dropdown a:hover { background:#333; color:#e74c3c; }
+        .dash-dropdown a:last-child { border-bottom:none; }
+        .dash-dropdown .current { background:#3a1515; color:#e74c3c; font-weight:bold; }
+    </style>
+</head>
+
+<body class="page">
+
+    <header class="main-header">
+        <div class="logo-space">
+            <img src="media/logo.png" alt="logo" class="logo-img">
+        </div>
+        <div class="title-header">
+            Escuela Técnica N°1 Nuestra Señora del Valle
+        </div>
+        <div class="dash-switcher">
+            <button class="dash-btn" onclick="toggleDashDropdown()">⬇ Panel Profesor</button>
+            <div id="dashDropdown" class="dash-dropdown"></div>
+        </div>
+        <button class="hamburger-btn" id="hamburgerBtn">☰</button>
+        <div id="fullscreenMenu" class="fullscreen-menu-header">
+            <a href="../index.html">Inicio</a>
+            <a href="../temario.html">Temario</a>
+            <a href="login.html">Sesión</a>
+            <a href="../normativa.html">Normativa</a>
+            <a href="#">Cerrar</a>
+        </div>
+    </header>
+
+    <div class="page-wrapper">
+        <main class="container">
+
+            <!-- Campus Virtual - Sección Principal -->
+            <section class="admin-section" style="border: 2px solid #9b0b0b;">
+                <h2 style="color:#9b0b0b;">Campus Virtual</h2>
+                <p style="text-align:center;color: rgb(53, 48, 48);">
+                    Gestione tareas, materiales de estudio y calificaciones de sus alumnos.
+                </p>
+            </section>
+
+            <!-- Pestañas del Campus -->
+            <div style="display:flex;gap:5px;margin-bottom:20px;flex-wrap:wrap;">
+                <button class="tab-btn campus-tab" style="background:#9b0b0b;color:#fff;border:none;padding:10px 18px;border-radius:5px;cursor:pointer;font-size:0.9rem;" onclick="mostrarSeccion('crear-tarea', this)">Crear Tarea</button>
+                <button class="tab-btn campus-tab" style="background:#9b0b0b;color:#fff;border:none;padding:10px 18px;border-radius:5px;cursor:pointer;font-size:0.9rem;" onclick="mostrarSeccion('subir-material', this)">Subir Material</button>
+                <button class="tab-btn campus-tab" style="background:#9b0b0b;color:#fff;border:none;padding:10px 18px;border-radius:5px;cursor:pointer;font-size:0.9rem;" onclick="mostrarSeccion('ver-entregas', this)">Ver Entregas</button>
+                <button class="tab-btn campus-tab" style="background:#9b0b0b;color:#fff;border:none;padding:10px 18px;border-radius:5px;cursor:pointer;font-size:0.9rem;" onclick="mostrarSeccion('trabajos-materia', this)">Trabajos por Materia</button>
+            </div>
+
+            <!-- Crear Tarea -->
+            <section class="admin-section campus-seccion" id="seccion-crear-tarea" style="display:none;">
+                <h3>Crear Nueva Tarea</h3>
+                <div class="form-group">
+                    <select id="tarea-materia">
+                        <option value="">Seleccionar materia...</option>
+                    </select>
+                    <input type="text" id="tarea-titulo" placeholder="Título de la tarea">
+                    <textarea id="tarea-descripcion" placeholder="Descripción de la tarea" rows="3" style="width:100%;padding:8px;border-radius:5px;border:1px solid #ccc;"></textarea>
+                    <label>Fecha límite (opcional):</label>
+                    <input type="datetime-local" id="tarea-fecha">
+                    <button onclick="crearTarea()">Crear Tarea</button>
+                    <p id="msg-crear-tarea"></p>
+                </div>
+            </section>
+
+            <!-- Subir Material -->
+            <section class="admin-section campus-seccion" id="seccion-subir-material" style="display:none;">
+                <h3>Subir Material de Estudio</h3>
+                <div class="form-group">
+                    <select id="material-materia">
+                        <option value="">Seleccionar materia...</option>
+                    </select>
+                    <input type="text" id="material-titulo" placeholder="Título del material">
+                    <textarea id="material-descripcion" placeholder="Descripción (opcional)" rows="3" style="width:100%;padding:8px;border-radius:5px;border:1px solid #ccc;"></textarea>
+                    <input type="file" id="material-archivo">
+                    <button onclick="subirMaterial()">Subir Material</button>
+                    <p id="msg-subir-material"></p>
+                </div>
+            </section>
+
+            <!-- Ver Entregas por Tarea -->
+            <section class="admin-section campus-seccion" id="seccion-ver-entregas" style="display:none;">
+                <h3>Entregas de Alumnos</h3>
+                <div class="form-group">
+                    <select id="entregas-tarea" onchange="cargarEntregasTarea()">
+                        <option value="">Seleccionar tarea...</option>
+                    </select>
+                    <button onclick="cargarEntregasTarea()">Actualizar</button>
+                </div>
+                <div id="lista-entregas">
+                    <p style="text-align:center;color:rgb(53, 48, 48);">Seleccione una tarea para ver las entregas.</p>
+                </div>
+            </section>
+
+            <!-- Trabajos por Materia -->
+            <section class="admin-section campus-seccion" id="seccion-trabajos-materia" style="display:none;">
+                <h3>Trabajos por Materia</h3>
+                <div class="form-group">
+                    <select id="materia-select">
+                        <option value="">Seleccionar materia...</option>
+                    </select>
+                    <button onclick="cargarTrabajosMateria()">Actualizar</button>
+                </div>
+                <div id="seccion-trabajos" style="display:none;">
+                    <h3>Trabajos Recibidos</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Alumno</th>
+                                <th>Archivo</th>
+                                <th>Fecha</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-trabajos"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Documentos Compartidos -->
+            <section class="admin-section" style="border: 2px solid #9b0b0b;margin-top:25px;">
+                <h2 style="color:#9b0b0b;">Documentos Compartidos</h2>
+                <p style="text-align:center;color: rgb(53, 48, 48);">
+                    Creá carpetas y compartilas con otros profesores, alumnos o por curso.
+                </p>
+            </section>
+
+            <div style="margin-bottom:25px;">
+                <div class="compartidos-toolbar">
+                    <div id="breadcrumb-compartidos" style="flex:1;font-size:0.95rem;color:#333;">
+                        <a href="#" onclick="irACarpetaCompartida(null);return false;" style="color:#9b0b0b;text-decoration:none;">Raíz</a>
+                    </div>
+                    <button onclick="mostrarCrearCarpetaCompartida()" style="background:#27ae60;color:white;border:none;padding:8px 16px;border-radius:5px;cursor:pointer;">+ Carpeta</button>
+                    <label for="file-compartido" style="background:#c0392b;color:white;padding:8px 16px;border-radius:5px;cursor:pointer;">Subir Archivo</label>
+                    <input type="file" id="file-compartido" style="display:none;" onchange="subirDocumentoCompartido()">
+                </div>
+
+                <div id="crear-carpeta-compartida-form" style="display:none;" class="permiso-selector">
+                    <div class="form-inline" style="margin-bottom:8px;">
+                        <input type="text" id="nombre-carpeta-compartida" placeholder="Nombre de la carpeta" style="flex:1;padding:8px;border-radius:5px;border:1px solid #ccc;">
+                        <button onclick="crearCarpetaCompartida()" style="background:#27ae60;color:white;border:none;padding:8px 16px;border-radius:5px;cursor:pointer;">Crear</button>
+                        <button onclick="document.getElementById('crear-carpeta-compartida-form').style.display='none'" style="background:#888;color:white;border:none;padding:8px 16px;border-radius:5px;cursor:pointer;">Cancelar</button>
+                    </div>
+                    <p style="margin:0 0 5px 0;font-size:0.85rem;color:#555;"><strong>Compartir con:</strong></p>
+                    <div class="form-inline" style="gap:6px;">
+                        <select id="permiso-tipo" style="padding:6px;border-radius:5px;border:1px solid #ccc;">
+                            <option value="role">Todos los Profesores</option>
+                            <option value="user">Usuario específico</option>
+                            <option value="curso">Por Curso / Materia</option>
+                        </select>
+                        <select id="permiso-destino" style="padding:6px;border-radius:5px;border:1px solid #ccc;flex:1;">
+                            <option value="5">Todos los Profesores</option>
+                        </select>
+                        <button onclick="agregarPermiso()" style="background:#9b0b0b;color:white;border:none;padding:6px 12px;border-radius:5px;cursor:pointer;">+ Agregar</button>
+                    </div>
+                    <div id="permisos-lista" style="margin-top:8px;"></div>
+                </div>
+
+                <div class="compartidos-body">
+                    <div id="lista-compartidos">
+                        <p style="text-align:center;color:#555;">Cargando documentos compartidos...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pañol (abajo del todo) -->
+            <div style="margin-top:25px;border:1px solid #555;border-radius:5px;overflow:hidden;">
+                <div onclick="togglePanol()" style="background:#222;padding:12px 15px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;">
+                    <span style="font-weight:bold;color:#eee;">Panel de Pañol <span style="font-weight:normal;color:#999;font-size:0.85rem;">(herramientas y pedidos)</span></span>
+                    <span id="panol-toggle-icon" style="color:#999;">▶</span>
+                </div>
+                <div id="panol-content" style="display:none;padding:15px;background:#2a2a2a;border-top:1px solid #555;">
+                    <p style="text-align:center;color:#ccc;margin-bottom:15px;">
+                        Solicite herramientas y gestione sus pedidos activos
+                    </p>
+        <section style="border:none;padding:0;">
+            <h3 style="color:#eee;">Solicitar herramientas</h3>
+            <div class="form-group" style="display:flex;gap:10px;flex-wrap:wrap;">
+                <select id="categoria" class="panol-select" style="flex:2;min-width:150px;"></select>
+                <input type="number" id="cantidad" min="1" value="1" class="panol-input" style="flex:0 0 70px;">
+                <button onclick="pedirHerramientas()" class="panol-btn">Solicitar</button>
+            </div>
+            <p id="mensaje" style="color:#ccc;"></p>
+        </section>
+        <section style="border:none;padding:0;margin-top:15px;">
+            <h3 style="color:#eee;">Mis Pedidos</h3>
+            <div id="tabla-pedidos" style="color:#fff;"></div>
+        </section>
+                    <section style="border:none;padding:0;margin-top:15px;">
+                        <h3 style="color:#eee;">Mis herramientas en uso</h3>
+                        <table style="background:#333;color:#eee;">
+                            <thead>
+                                <tr>
+                                    <th>Herramienta</th>
+                                    <th>Categoría</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-activos"></tbody>
+                        </table>
+                    </section>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h4>Sobre nosotros</h4>
+                <p>Somos una Institución con más de 75 años formando técnicos</p>
+            </div>
+            <div class="footer-section">
+                <h4>Enlaces</h4>
+                <ul>
+                    <li><a href="../index.html">Inicio</a></li>
+                    <li><a href="../contacto.html">Contacto</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Síguenos</h4>
+                <div class="social-icons">
+                    <a href="#"><img src="img/facebook.svg" alt="Facebook"></a>
+                    <a href="#"><img src="img/ig.svg" alt="Instagram"></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>
+                &copy; 2026 Portal Institucional |
+                Desarrollado por
+                <a href="https://github.com/alejogarciaDev" target="_blank">Alejo Técnica</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script>
+        const API_AUTH = window.API_AUTH;
+        const API = window.API;
+        let categoryStock = {};
+        let permisosSeleccionados = [];
+
+        function getAuthHeaders() {
+            const token = sessionStorage.getItem("token");
+            if (!token) { window.location.href = "login.html"; return {}; }
+            return { "Content-Type": "application/json", "Authorization": `Bearer ${token}` };
+        }
+
+        function getFileHeaders() {
+            const token = sessionStorage.getItem("token");
+            if (!token) { window.location.href = "login.html"; return {}; }
+            return { "Authorization": `Bearer ${token}` };
+        }
+
+        // ================= PESTAÑAS =================
+        function mostrarSeccion(seccion, btn) {
+            document.querySelectorAll('.campus-seccion').forEach(s => s.style.display = 'none');
+            document.getElementById('seccion-' + seccion).style.display = 'block';
+            document.querySelectorAll('.tab-btn').forEach(b => b.style.background = '#9b0b0b');
+            if (btn) btn.style.background = '#6b0707';
+        }
+
+        // ================= PAÑOL (acordeón colapsado) =================
+        function togglePanol() {
+            const content = document.getElementById("panol-content");
+            const icon = document.getElementById("panol-toggle-icon");
+            if (content.style.display === "none") {
+                content.style.display = "block";
+                icon.textContent = "▼";
+            } else {
+                content.style.display = "none";
+                icon.textContent = "▶";
+            }
+        }
+
+        // ================= DOCUMENTOS COMPARTIDOS =================
+        let carpetaCompartidaActual = null;
+        let materiasDisponibles = [];
+        let usuariosDisponibles = [];
+
+        async function cargarMateriasYUsuarios() {
+            try {
+                const r1 = await fetch(API + '/materias/', { headers: getAuthHeaders() });
+                if (r1.ok) materiasDisponibles = await r1.json();
+                const r2 = await fetch(API_AUTH + '/users/', { headers: getAuthHeaders() });
+                if (r2.ok) usuariosDisponibles = await r2.json();
+            } catch (e) { console.error(e); }
+        }
+
+        function mostrarCrearCarpetaCompartida() {
+            const form = document.getElementById('crear-carpeta-compartida-form');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+            if (form.style.display === 'block') {
+                permisosSeleccionados = [];
+                actualizarPermisosUI();
+                actualizarDestinos();
+            }
+        }
+
+        function actualizarDestinos() {
+            const tipo = document.getElementById('permiso-tipo').value;
+            const destSelect = document.getElementById('permiso-destino');
+            destSelect.innerHTML = '';
+            if (tipo === 'role') {
+                destSelect.innerHTML = '<option value="4">Todos los Alumnos</option><option value="5">Todos los Profesores</option>';
+            } else if (tipo === 'user') {
+                usuariosDisponibles.forEach(u => {
+                    destSelect.innerHTML += `<option value="${u.id}">${u.email}</option>`;
+                });
+            } else if (tipo === 'curso') {
+                materiasDisponibles.forEach(m => {
+                    destSelect.innerHTML += `<option value="${m.id}">${m.nombre}</option>`;
+                });
+            }
+        }
+
+        document.getElementById('permiso-tipo').addEventListener('change', actualizarDestinos);
+
+        function agregarPermiso() {
+            const tipo = document.getElementById('permiso-tipo').value;
+            const destinoId = parseInt(document.getElementById('permiso-destino').value);
+            const labels = { 'role': 'Rol', 'user': 'Usuario', 'curso': 'Curso' };
+            const label = labels[tipo] + ' #' + destinoId;
+            if (permisosSeleccionados.some(p => p.tipo === tipo && p.destino_id === destinoId)) {
+                alert('Ya agregaste ese destino');
+                return;
+            }
+            permisosSeleccionados.push({ tipo, destino_id: destinoId, label });
+            actualizarPermisosUI();
+        }
+
+        function quitarPermiso(index) {
+            permisosSeleccionados.splice(index, 1);
+            actualizarPermisosUI();
+        }
+
+        function actualizarPermisosUI() {
+            const cont = document.getElementById('permisos-lista');
+            if (permisosSeleccionados.length === 0) {
+                cont.innerHTML = '<span style="color:#888;font-size:0.85rem;">Visible para todos (sin restricciones)</span>';
+                return;
+            }
+            let html = '';
+            permisosSeleccionados.forEach((p, i) => {
+                const tipoLabel = { 'role': 'Rol', 'user': 'Usuario', 'curso': 'Curso' }[p.tipo] || p.tipo;
+                html += `<span class="permiso-tag">${tipoLabel} #${p.destino_id} <button onclick="quitarPermiso(${i})">&times;</button></span>`;
+            });
+            cont.innerHTML = html;
+        }
+
+        async function crearCarpetaCompartida() {
+            const nombre = document.getElementById('nombre-carpeta-compartida').value;
+            if (!nombre) { alert('Ingresa un nombre'); return; }
+            let url = API + '/campus/compartidos/carpeta?nombre=' + encodeURIComponent(nombre);
+            if (carpetaCompartidaActual) url += '&carpeta_padre_id=' + carpetaCompartidaActual;
+            url += '&permisos=' + encodeURIComponent(JSON.stringify(permisosSeleccionados));
+            try {
+                const res = await fetch(url, { method: 'POST', headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') } });
+                if (res.ok) {
+                    document.getElementById('nombre-carpeta-compartida').value = '';
+                    document.getElementById('crear-carpeta-compartida-form').style.display = 'none';
+                    permisosSeleccionados = [];
+                    cargarDocumentosCompartidos();
+                } else {
+                    const err = await res.json();
+                    alert(err.detail || 'Error al crear carpeta');
+                }
+            } catch (err) { alert('Error de conexión'); }
+        }
+
+        async function cargarDocumentosCompartidos() {
+            const contenedor = document.getElementById('lista-compartidos');
+            let url = API + '/campus/compartidos/';
+            if (carpetaCompartidaActual) url += '?carpeta_id=' + carpetaCompartidaActual;
+            try {
+                const res = await fetch(url, { headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') } });
+                if (!res.ok) { contenedor.innerHTML = '<p style="text-align:center;color:#555;">Error al cargar.</p>'; return; }
+                const data = await res.json();
+                renderizarRutaCompartida(data.ruta);
+                if (data.contenido.length === 0) {
+                    contenedor.innerHTML = '<p class="empty-folder">Esta carpeta está vacía.</p>';
+                    return;
+                }
+                let html = '<div class="doc-grid">';
+                data.contenido.forEach(doc => {
+                    if (doc.es_carpeta) {
+                        html += '<div class="doc-item folder" onclick="irACarpetaCompartida(' + doc.id + ')">';
+                        html += '<div class="doc-icon">📁</div>';
+                        html += '<span class="doc-name">' + doc.nombre + '</span>';
+                        html += '</div>';
+                    } else {
+                        html += '<div class="doc-item">';
+                        html += '<div class="doc-icon">📄</div>';
+                        html += '<span class="doc-name">' + doc.nombre + '</span>';
+                        html += '<div class="doc-actions">';
+                        html += '<a href="' + API + '/archivos/descargar/' + doc.archivo_id + '" target="_blank" class="btn-download">Descargar</a>';
+                        html += '</div></div>';
+                    }
+                });
+                html += '</div>';
+                contenedor.innerHTML = html;
+            } catch (err) { contenedor.innerHTML = '<p style="text-align:center;color:#555;">Error al cargar.</p>'; }
+        }
+
+        function renderizarRutaCompartida(ruta) {
+            const el = document.getElementById('breadcrumb-compartidos');
+            let html = '<a href="#" onclick="irACarpetaCompartida(null);return false;" style="color:#9b0b0b;text-decoration:none;">Raíz</a>';
+            ruta.forEach(p => {
+                html += ' / <a href="#" onclick="irACarpetaCompartida(' + p.id + ');return false;" style="color:#9b0b0b;text-decoration:none;">' + p.nombre + '</a>';
+            });
+            el.innerHTML = html;
+        }
+
+        function irACarpetaCompartida(id) {
+            carpetaCompartidaActual = id;
+            cargarDocumentosCompartidos();
+        }
+
+        async function subirDocumentoCompartido() {
+            const fileInput = document.getElementById('file-compartido');
+            if (!fileInput.files.length) return;
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            if (carpetaCompartidaActual) formData.append('carpeta_padre_id', carpetaCompartidaActual);
+            try {
+                const res = await fetch(API + '/campus/compartidos/subir', {
+                    method: 'POST', headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') }, body: formData
+                });
+                if (res.ok) {
+                    fileInput.value = '';
+                    cargarDocumentosCompartidos();
+                } else {
+                    const err = await res.json();
+                    alert(err.detail || 'Error al subir archivo');
+                }
+            } catch (err) { alert('Error de conexión'); }
+        }
+
+        // ================= SELECTOR DE DASHBOARDS =================
+        const CURRENT_DASHBOARD = "profesor";
+
+        function toggleDashDropdown() {
+            document.getElementById('dashDropdown').classList.toggle('show');
+        }
+
+        document.addEventListener('click', function(e) {
+            const sw = document.querySelector('.dash-switcher');
+            if (sw && !sw.contains(e.target)) {
+                document.getElementById('dashDropdown').classList.remove('show');
+            }
+        });
+
+        async function cargarSelectorDashboards() {
+            try {
+                const res = await fetch(API_AUTH + '/auth/mis-dashboards', { headers: getAuthHeaders() });
+                if (!res.ok) return;
+                const dashboards = await res.json();
+                const dd = document.getElementById('dashDropdown');
+                dd.innerHTML = '';
+                dashboards.forEach(d => {
+                    if (d.id === CURRENT_DASHBOARD) {
+                        dd.innerHTML += '<a href="#" class="current">✅ ' + d.label + '</a>';
+                    } else {
+                        dd.innerHTML += '<a href="' + d.url + '">➡ ' + d.label + '</a>';
+                    }
+                });
+            } catch (e) {}
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const token = sessionStorage.getItem("token");
+            if (!token) { window.location.href = "login.html"; return; }
+            cargarCategorias();
+            cargarPedidos();
+            cargarPrestamos();
+            cargarMateriasYUsuarios();
+            setInterval(() => { cargarCategorias(); cargarPedidos(); cargarPrestamos(); }, 5000);
+            cargarMateriasParaFiltro();
+            cargarMateriasSelectores();
+            cargarTareasParaSelect();
+            cargarDocumentosCompartidos();
+            cargarSelectorDashboards();
+            const primerBtn = document.querySelector('.campus-tab');
+            if (primerBtn) primerBtn.click();
+        });
+
+        async function cargarCategorias() {
+            try {
+                const res = await fetch(API_AUTH + '/categories/summary', { headers: getAuthHeaders() });
+                if (!res.ok) { console.error(await res.text()); return; }
+                const data = await res.json();
+                const select = document.getElementById("categoria");
+                select.innerHTML = '<option value="">Seleccionar categoría</option>';
+                data.forEach(cat => {
+                    categoryStock[cat.category_id] = cat.available;
+                    select.innerHTML += '<option value="' + cat.category_id + '">' + cat.category_name + ' (Disponibles: ' + cat.available + ')</option>';
+                });
+            } catch (err) { console.error(err); }
+        }
+
+        async function pedirHerramientas() {
+            const categoria = document.getElementById("categoria").value;
+            const cantidad = parseInt(document.getElementById("cantidad").value);
+            const msg = document.getElementById("mensaje");
+            if (!categoria) { msg.textContent = "Seleccioná una categoría"; msg.style.color = "red"; return; }
+            const available = categoryStock[parseInt(categoria)] || 0;
+            if (cantidad > available) { msg.textContent = "Error: Solo hay " + available + " disponibles."; msg.style.color = "red"; return; }
+            msg.textContent = "Creando pedido..."; msg.style.color = "#ccc";
+            try {
+                const res = await fetch(API_AUTH + '/orders/', {
+                    method: "POST", headers: getAuthHeaders(),
+                    body: JSON.stringify({ items: [{ category_id: parseInt(categoria), quantity: cantidad }] })
+                });
+                if (!res.ok) throw new Error(await res.text());
+                msg.textContent = "Pedido creado correctamente"; msg.style.color = "#5cb85c";
+            } catch (err) { console.error(err); msg.textContent = "Error al crear pedido"; msg.style.color = "red"; }
+        }
+
+        let lastOrderStates = {};
+
+        function playNotificationSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.frequency.value = 880;
+                osc.type = "sine";
+                gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + 0.5);
+            } catch(e) {}
+        }
+
+        async function cargarPedidos() {
+            try {
+                const res = await fetch(API_AUTH + '/orders/my', { headers: getAuthHeaders() });
+                if (!res.ok) { console.error(await res.text()); return; }
+                const data = await res.json();
+                const contenedor = document.getElementById("tabla-pedidos");
+                if (!contenedor) return;
+                const pendientes = data.filter(o => o.status !== "entregado");
+                if (!pendientes.length) {
+                    contenedor.innerHTML = '<p style="color:#aaa;">No tiene pedidos en proceso.</p>';
+                    return;
+                }
+                let html = '<div style="display:flex;flex-direction:column;gap:8px;">';
+                pendientes.forEach(o => {
+                    const estadoTexto = o.status === 'pendiente' ? 'Pendiente' : '¡Listo para retirar!';
+                    const colorEstado = o.status === 'pendiente' ? '#ffc107' : '#28a745';
+                    
+                    if (lastOrderStates[o.id] && lastOrderStates[o.id] === 'pendiente' && o.status === 'preparado') {
+                        playNotificationSound();
+                        const msg = document.getElementById("mensaje");
+                        msg.textContent = '¡Tu pedido #' + o.id + ' está listo para retirar en el pañol!';
+                        msg.style.color = "green";
+                        msg.style.fontWeight = "bold";
+                        setTimeout(() => { msg.textContent = ""; }, 10000);
+                    }
+                    lastOrderStates[o.id] = o.status;
+
+                    let itemsHTML = '';
+                    if (o.items && o.items.length) {
+                        itemsHTML = o.items.map(i => {
+                            return '<span style="margin-right:10px;">• ' + i.quantity + 'x ' + (i.category_name || 'Cat ' + i.category_id) + '</span>';
+                        }).join('');
+                    }
+                    html += '<div style="border-left:4px solid ' + colorEstado + ';background:rgba(255,255,255,0.05);padding:10px;border-radius:4px;">';
+                    html += '<div><strong style="color:' + colorEstado + ';">[' + estadoTexto + ']</strong> <span style="color:#999;font-size:0.85rem;">Pedido #' + o.id + '</span></div>';
+                    html += '<div style="margin-top:5px;font-size:0.9rem;">' + itemsHTML + '</div>';
+                    html += '</div>';
+                });
+                html += '</div>';
+                contenedor.innerHTML = html;
+            } catch (err) { console.error(err); }
+        }
+
+        async function cargarPrestamos() {
+            try {
+                const res = await fetch(API_AUTH + '/loans/active/by-professor', { headers: getAuthHeaders() });
+                if (!res.ok) { console.error(await res.text()); return; }
+                const data = await res.json();
+                const tabla = document.getElementById("tabla-activos");
+                tabla.innerHTML = "";
+                if (!data.length) { tabla.innerHTML = '<tr><td colspan="3" style="color:#aaa;">No hay préstamos activos</td></tr>'; return; }
+                data.forEach(item => {
+                    const profesor = item.profesor;
+                    item.tools.forEach(tool => {
+                        tabla.innerHTML += '<tr><td>' + tool.barcode + '</td><td>' + tool.category + '</td><td>' + profesor + '</td></tr>';
+                    });
+                });
+            } catch (err) { console.error(err); }
+        }
+
+        // ================= CAMPUS VIRTUAL =================
+
+        function cargarMateriasParaFiltro() {
+            fetch(API + '/materias/', { headers: getAuthHeaders() })
+                .then(r => r.json())
+                .then(data => {
+                    const select = document.getElementById("materia-select");
+                    data.forEach(m => { select.innerHTML += '<option value="' + m.id + '">' + m.nombre + '</option>'; });
+                })
+                .catch(err => console.error(err));
+        }
+
+        function cargarMateriasSelectores() {
+            fetch(API + '/materias/', { headers: getAuthHeaders() })
+                .then(r => r.json())
+                .then(data => {
+                    ['tarea-materia', 'material-materia'].forEach(id => {
+                        const sel = document.getElementById(id);
+                        sel.innerHTML = '<option value="">Seleccionar materia...</option>';
+                        data.forEach(m => { sel.innerHTML += '<option value="' + m.id + '">' + m.nombre + '</option>'; });
+                    });
+                })
+                .catch(err => console.error(err));
+        }
+
+        async function crearTarea() {
+            const materiaId = document.getElementById('tarea-materia').value;
+            const titulo = document.getElementById('tarea-titulo').value;
+            const descripcion = document.getElementById('tarea-descripcion').value;
+            const fecha = document.getElementById('tarea-fecha').value;
+            const msg = document.getElementById('msg-crear-tarea');
+            if (!materiaId || !titulo) {
+                msg.textContent = 'Completa materia y título'; msg.style.color = 'red'; return;
+            }
+            const body = { materia_id: parseInt(materiaId), titulo, descripcion };
+            if (fecha) body.fecha_limite = new Date(fecha).toISOString();
+            try {
+                const res = await fetch(API + '/campus/tareas/', {
+                    method: 'POST', headers: getAuthHeaders(),
+                    body: JSON.stringify(body)
+                });
+                if (res.ok) {
+                    msg.textContent = 'Tarea creada correctamente'; msg.style.color = 'green';
+                    document.getElementById('tarea-titulo').value = '';
+                    document.getElementById('tarea-descripcion').value = '';
+                    document.getElementById('tarea-fecha').value = '';
+                    cargarTareasParaSelect();
+                } else {
+                    const err = await res.json();
+                    msg.textContent = err.detail || 'Error al crear tarea'; msg.style.color = 'red';
+                }
+            } catch (err) {
+                console.error(err);
+                msg.textContent = 'Error de conexión'; msg.style.color = 'red';
+            }
+        }
+
+        async function subirMaterial() {
+            const materiaId = document.getElementById('material-materia').value;
+            const titulo = document.getElementById('material-titulo').value;
+            const descripcion = document.getElementById('material-descripcion').value;
+            const fileInput = document.getElementById('material-archivo');
+            const msg = document.getElementById('msg-subir-material');
+            if (!materiaId || !titulo) {
+                msg.textContent = 'Completa materia y título'; msg.style.color = 'red'; return;
+            }
+            const formData = new FormData();
+            formData.append('materia_id', materiaId);
+            formData.append('titulo', titulo);
+            formData.append('descripcion', descripcion);
+            if (fileInput.files.length) formData.append('file', fileInput.files[0]);
+            try {
+                const res = await fetch(API + '/campus/materiales/subir', {
+                    method: 'POST', headers: getFileHeaders(),
+                    body: formData
+                });
+                if (res.ok) {
+                    msg.textContent = 'Material subido correctamente'; msg.style.color = 'green';
+                    document.getElementById('material-titulo').value = '';
+                    document.getElementById('material-descripcion').value = '';
+                    fileInput.value = '';
+                } else {
+                    const err = await res.json();
+                    msg.textContent = err.detail || 'Error al subir material'; msg.style.color = 'red';
+                }
+            } catch (err) {
+                console.error(err);
+                msg.textContent = 'Error de conexión'; msg.style.color = 'red';
+            }
+        }
+
+        async function cargarTareasParaSelect() {
+            try {
+                const res = await fetch(API + '/campus/tareas/', { headers: getAuthHeaders() });
+                if (res.ok) {
+                    const data = await res.json();
+                    const select = document.getElementById('entregas-tarea');
+                    select.innerHTML = '<option value="">Seleccionar tarea...</option>';
+                    data.forEach(t => {
+                        select.innerHTML += '<option value="' + t.id + '">' + t.titulo + ' - ' + (t.materia_nombre || '') + '</option>';
+                    });
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        async function cargarEntregasTarea() {
+            const tareaId = document.getElementById('entregas-tarea').value;
+            const contenedor = document.getElementById('lista-entregas');
+            if (!tareaId) {
+                contenedor.innerHTML = '<p style="text-align:center;color:rgb(53, 48, 48);">Seleccione una tarea para ver las entregas.</p>';
+                return;
+            }
+            contenedor.innerHTML = '<p>Cargando entregas...</p>';
+            try {
+                const res = await fetch(API + '/campus/tareas/' + tareaId + '/entregas', { headers: getAuthHeaders() });
+                if (!res.ok) { contenedor.innerHTML = '<p>Error al cargar entregas.</p>'; return; }
+                const entregas = await res.json();
+                if (entregas.length === 0) {
+                    contenedor.innerHTML = '<p style="text-align:center;">No hay entregas para esta tarea.</p>';
+                    return;
+                }
+                let html = '<table><thead><tr><th>Alumno</th><th>Archivo</th><th>Fecha</th><th>Estado</th><th>Nota</th><th>Acción</th></tr></thead><tbody>';
+                entregas.forEach(e => {
+                    const estado = e.calificado ? 'Calificado' : 'Pendiente';
+                    const nota = e.nota !== null && e.nota !== undefined ? e.nota : '-';
+                    html += '<tr><td>' + (e.alumno_nombre || 'Desconocido') + '</td>';
+                    html += '<td><a href="' + API + '/archivos/descargar/' + e.archivo_id + '" target="_blank">Descargar</a></td>';
+                    html += '<td>' + new Date(e.fecha_entrega).toLocaleDateString() + '</td>';
+                    html += '<td>' + estado + '</td><td><strong>' + nota + '</strong></td>';
+                    html += '<td><button onclick="mostrarCalificar(' + e.id + ')">Calificar</button>';
+                    html += '<div id="calificar-' + e.id + '" style="display:none;margin-top:5px;">';
+                    html += '<input type="number" id="nota-' + e.id + '" min="1" max="10" step="0.5" placeholder="Nota" style="width:70px;">';
+                    html += '<input type="text" id="feedback-' + e.id + '" placeholder="Feedback" style="width:150px;">';
+                    html += '<button onclick="calificarEntrega(' + e.id + ')">Guardar</button></div></td></tr>';
+                });
+                html += '</tbody></table>';
+                contenedor.innerHTML = html;
+            } catch (err) {
+                console.error(err);
+                contenedor.innerHTML = '<p>Error al cargar entregas.</p>';
+            }
+        }
+
+        function mostrarCalificar(entregaId) {
+            const div = document.getElementById('calificar-' + entregaId);
+            div.style.display = div.style.display === 'none' ? 'block' : 'none';
+        }
+
+        async function calificarEntrega(entregaId) {
+            const nota = document.getElementById('nota-' + entregaId).value;
+            const feedback = document.getElementById('feedback-' + entregaId).value;
+            if (!nota) { alert('Ingresa una nota'); return; }
+            try {
+                const res = await fetch(API + '/campus/entregas/' + entregaId + '/calificar', {
+                    method: 'POST', headers: getAuthHeaders(),
+                    body: JSON.stringify({ nota: parseFloat(nota), feedback })
+                });
+                if (res.ok) { alert('Calificación guardada'); cargarEntregasTarea(); }
+                else { const err = await res.json(); alert(err.detail || 'Error al calificar'); }
+            } catch (err) { alert('Error de conexión'); }
+        }
+
+        async function cargarTrabajosMateria() {
+            const materiaId = document.getElementById("materia-select").value;
+            const seccionTrabajos = document.getElementById("seccion-trabajos");
+            const tabla = document.getElementById("tabla-trabajos");
+            if (!materiaId) { seccionTrabajos.style.display = "none"; return; }
+            seccionTrabajos.style.display = "block";
+            tabla.innerHTML = "<tr><td colspan='4'>Cargando...</td></tr>";
+            try {
+                const res = await fetch(API + '/archivos/materia/' + materiaId, { headers: getAuthHeaders() });
+                if (res.ok) {
+                    const data = await res.json();
+                    tabla.innerHTML = "";
+                    if (data.length === 0) { tabla.innerHTML = "<tr><td colspan='4'>No hay trabajos recibidos</td></tr>"; }
+                    else {
+                        data.forEach(trabajo => {
+                            tabla.innerHTML += '<tr><td>' + trabajo.alumno_nombre + '</td><td>' + trabajo.nombre_archivo + '</td><td>' + new Date(trabajo.fecha_subida).toLocaleDateString() + '</td><td><a href="' + API + '/archivos/descargar/' + trabajo.id + '" target="_blank" class="btn">Descargar</a></td></tr>';
+                        });
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+                tabla.innerHTML = "<tr><td colspan='4'>Error al cargar trabajos</td></tr>";
+            }
+        }
+    </script>
+
+</body>
+</html>

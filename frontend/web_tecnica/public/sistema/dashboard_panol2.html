@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Portal Institucional</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="shortcut icon" href="media/imagen.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .dash-switcher { position:relative; display:inline-block; }
+        .dash-btn { background:#7a0808; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-size:0.85rem; }
+        .dash-btn:hover { background:#5c0606; }
+        .dash-dropdown { display:none; position:absolute; right:0; top:100%; background:#222; border-radius:6px; box-shadow:0 4px 12px rgba(0,0,0,0.4); z-index:1000; min-width:200px; overflow:hidden; }
+        .dash-dropdown.show { display:block; }
+        .dash-dropdown a { display:block; padding:10px 16px; color:#ddd; text-decoration:none; font-size:0.9rem; border-bottom:1px solid #444; }
+        .dash-dropdown a:hover { background:#333; color:#e74c3c; }
+        .dash-dropdown a:last-child { border-bottom:none; }
+        .dash-dropdown .current { background:#3a1515; color:#e74c3c; font-weight:bold; }
+    </style>
+</head>
+
+<div id="scanModal" class="modal">
+  <div class="modal-content" style="background:#2a2a2a;color:#eee;">
+    <h2 style="color:#e74c3c;">Escanear herramientas</h2>
+    <div id="modalRequiredItems" style="background: #4a1515; color: #f8d7da; padding: 10px; margin-bottom: 15px; border-radius: 5px; font-weight: bold;"></div>
+    <textarea id="scanInput" placeholder="Escanee códigos aquí (separados por coma)..." rows="4" style="width: 100%; margin-bottom: 10px; border-radius: 5px; border: 1px solid #555; background:#333;color:#eee; padding: 10px;"></textarea>
+    <div class="modal-buttons">
+      <button onclick="confirmarEntrega()">Confirmar entrega</button>
+      <button onclick="cerrarModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<body>
+
+<header class="main-header">
+    <div class="logo-space">
+        <img src="media/logo.png" class="logo-img">
+    </div>
+    <div class="title-header">Escuela Técnica N°1 Nuestra Señora del Valle</div>
+    <div class="dash-switcher" style="margin-right:10px;">
+        <button class="dash-btn" onclick="toggleDashDropdown()">⬇ Panel Pañol</button>
+        <div id="dashDropdown" class="dash-dropdown"></div>
+    </div>
+</header>
+
+<main>
+
+<section class="admin-section">
+    <h2>Dashboard - Gestión del Pañol</h2>
+</section>
+
+<section class="admin-section">
+    <h3>Crear Nueva Categoría</h3>
+    <form id="createCategoryForm" style="display: flex; gap: 10px; align-items: center; margin-bottom: 20px;">
+        <input type="text" id="newCategoryName" placeholder="Nombre de la categoría" required style="flex: 1; padding: 8px;">
+        <button type="submit" style="background-color: #007bff; color: white; border: none; padding: 8px 15px; border-radius: 3px; cursor: pointer;">Crear Categoría</button>
+    </form>
+</section>
+
+<section class="admin-section">
+    <h3>Agregar Herramientas</h3>
+
+    <select id="toolCategory"></select>
+
+    <form id="createToolForm" style="margin-top: 10px; display: flex; gap: 10px;">
+        <input type="number" id="newToolNumber" placeholder="Cantidad" required style="padding: 8px;">
+        <button type="submit" style="background-color: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 3px; cursor: pointer;">Agregar</button>
+    </form>
+
+    <div id="createdBarcodes"></div>
+</section>
+
+<section class="admin-section">
+    <h3>📦 Pedido Manual Directo</h3>
+    <form id="manualOrderForm" style="display: flex; gap: 10px; align-items: center; margin-bottom: 20px;">
+        <select id="manualProfesor" required style="flex: 1; padding: 8px;">
+            <option value="">Cargando profesores...</option>
+        </select>
+        <select id="manualCategory" required style="flex: 1; padding: 8px;">
+            <option value="">Seleccionar categoría</option>
+        </select>
+        <input type="number" id="manualQuantity" placeholder="Cantidad" required style="width: 80px; padding: 8px;" min="1" value="1">
+        <input type="text" id="manualDescription" placeholder="Nota (opcional)" style="flex: 1; padding: 8px; border-radius: 3px; border: 1px solid #ccc;">
+        <button type="submit" style="background-color: #f39c12; color: white; border: none; padding: 8px 15px; border-radius: 3px; cursor: pointer; font-weight: bold;">Entregar Directamente</button>
+    </form>
+</section>
+
+<section class="admin-section">
+    <h3>📦 Pedidos pendientes y preparados</h3>
+    <div id="pendingList"></div>
+</section>
+
+<section class="admin-section">
+    <h3>📌 Préstamos Activos</h3>
+    <div id="activeLoansList"></div>
+</section>
+
+<section class="admin-section">
+    <h3>🔄 Devoluciones (Escanear Categoría)</h3>
+    <form id="returnForm" style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
+        <select id="returnProfesor" required style="flex: 1; padding: 8px;">
+            <option value="">Seleccionar Profesor que devuelve</option>
+        </select>
+        <input type="text" id="returnCategoryBarcode" placeholder="Escanear QR Categoría" required style="flex: 1; padding: 8px; border-radius: 3px; border: 1px solid #ccc;">
+        <input type="number" id="returnQuantity" placeholder="Cantidad" required min="1" value="1" style="width: 80px; padding: 8px;">
+        <input type="text" id="returnDescription" placeholder="Nota (opcional)" style="flex: 1; padding: 8px; border-radius: 3px; border: 1px solid #ccc;">
+        <button type="submit" style="background-color: #17a2b8; color: white; border: none; padding: 8px 15px; border-radius: 3px; cursor: pointer; font-weight: bold;">Devolver</button>
+    </form>
+    <div id="returnList" style="margin-top: 10px;"></div>
+</section>
+
+<section class="admin-section">
+    <h3>Herramientas Disponibles</h3>
+    <div id="availableTools"></div>
+</section>
+
+<!-- ================= HISTORIAL Y REGISTROS ================= -->
+<section class="admin-section">
+    <h3>📜 Registros de Préstamos</h3>
+    <div style="margin-bottom: 15px;">
+        <input type="date" id="historyDate" style="padding: 5px; border-radius: 3px; border: 1px solid #ccc;">
+        <button onclick="cargarHistorial()" style="padding: 5px 10px; border: none; background-color: #007bff; color: white; border-radius: 3px; cursor: pointer;">Buscar</button>
+        <button onclick="descargarExcel()" style="padding: 5px 10px; border: none; background-color: #28a745; color: white; border-radius: 3px; cursor: pointer; float: right;">Descargar Excel</button>
+    </div>
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+            <thead>
+                <tr style="background-color: #f8f9fa; text-align: left;">
+                    <th style="padding: 8px; border: 1px solid #dee2e6;">Profesor</th>
+                    <th style="padding: 8px; border: 1px solid #dee2e6;">Pañolero</th>
+                    <th style="padding: 8px; border: 1px solid #dee2e6;">Herramienta</th>
+                    <th style="padding: 8px; border: 1px solid #dee2e6;">Fecha Préstamo</th>
+                    <th style="padding: 8px; border: 1px solid #dee2e6;">Fecha Devolución</th>
+                    <th style="padding: 8px; border: 1px solid #dee2e6;">Estado</th>
+                    <th style="padding: 8px; border: 1px solid #dee2e6;">Notas</th>
+                </tr>
+            </thead>
+            <tbody id="historyTableBody">
+                <!-- Registros inyectados por JS -->
+            </tbody>
+        </table>
+    </div>
+</section>
+</main>
+<footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h4>Sobre nosotros</h4>
+                <p>Somos una Institución con mas de 75 años formando a tecnicos</p>
+            </div>
+            <div class="footer-section">
+                <h4>Enlaces</h4>
+                <ul>
+                    <li><a href="../index.html">Inicio</a></li>
+                    <li><a href="../contacto.html">Contacto</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Síguenos</h4>
+                <div class="social-icons">
+                    <a href="#"><img src="img/facebook.svg" alt="Facebook"></a>                   
+                    <a href="#"><img src="img/ig.svg.svg" alt="Instagram"></a>
+                </div>
+            </div>
+        </div>
+        <footer>
+            <div class="footer-bottom">
+                <p>
+    © 2026 Portal Institucional | 
+    Desarrollado por 
+    <a href="https://github.com/alejogarciaDev" target="_blank">Alejo Técnica</a>
+  </p>
+
+            </div>
+</footer>
+
+</body>
+
+<script src="js/config.js"></script>
+<script>
+const API_URL = window.API_AUTH;
+const API_AUTH = window.API_AUTH;
+let categoriesMap = {};
+
+function getAuthHeaders() {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+        window.location.href = "login.html";
+        throw new Error("No token");
+    }
+    return {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+    };
+}
+
+async function apiGet(url) {
+    const res = await fetch(url, { method: "GET", headers: getAuthHeaders() });
+    if (!res.ok) return null;
+    return await res.json();
+}
+
+async function apiPost(url, body) {
+    const res = await fetch(url, { method: "POST", headers: getAuthHeaders(), body: JSON.stringify(body) });
+    if (!res.ok) return null;
+    return await res.json();
+}
+
+function showToast(message, isError = false) {
+    const toast = document.createElement("div");
+    toast.textContent = message;
+    toast.style.position = "fixed";
+    toast.style.bottom = "20px";
+    toast.style.right = "20px";
+    toast.style.backgroundColor = isError ? "#f44336" : "#4CAF50";
+    toast.style.color = "white";
+    toast.style.padding = "15px";
+    toast.style.borderRadius = "5px";
+    toast.style.zIndex = "1000";
+    toast.style.boxShadow = "0 4px 6px rgba(0,0,0,0.1)";
+    toast.style.transition = "opacity 0.5s ease-in-out";
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.opacity = "0";
+        setTimeout(() => document.body.removeChild(toast), 500);
+    }, 3000);
+}
+
+}
+
+// ================= SELECTOR DE DASHBOARDS =================
+const CURRENT_DASHBOARD = "panol";
+
+function toggleDashDropdown() {
+    document.getElementById('dashDropdown').classList.toggle('show');
+}
+
+document.addEventListener('click', function(e) {
+    const sw = document.querySelector('.dash-switcher');
+    if (sw && !sw.contains(e.target)) {
+        document.getElementById('dashDropdown').classList.remove('show');
+    }
+});
+
+async function cargarSelectorDashboards() {
+    try {
+        const res = await fetch(API_AUTH + '/auth/mis-dashboards', { headers: getAuthHeaders() });
+        if (!res.ok) return;
+        const dashboards = await res.json();
+        const dd = document.getElementById('dashDropdown');
+        dd.innerHTML = '';
+        dashboards.forEach(d => {
+            if (d.id === CURRENT_DASHBOARD) {
+                dd.innerHTML += '<a href="#" class="current">✅ ' + d.label + '</a>';
+            } else {
+                dd.innerHTML += '<a href="' + d.url + '">➡ ' + d.label + '</a>';
+            }
+        });
+    } catch (e) {}
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+    const user_id = sessionStorage.getItem("user_id");
+    if (!user_id) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    await cargarCategorias();
+    await cargarProfesores();
+    cargarTodo();
+    cargarSelectorDashboards();
+    
+    // Auto-actualizar cada 5 segundos
+    setInterval(cargarTodo, 5000);
+
+    const form = document.getElementById("createToolForm");
+    if (form) {
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const category_id = parseInt(document.getElementById("toolCategory").value);
+            const cantidad = parseInt(document.getElementById("newToolNumber").value);
+
+            if (!category_id) return alert("Seleccione una categoría");
+            if (!cantidad || cantidad <= 0) return alert("Cantidad inválida");
+
+            const res = await fetch(`${API_URL}/categories/add-stock/${category_id}`, {
+                method: "POST",
+                headers: getAuthHeaders(),
+                body: JSON.stringify({ quantity: cantidad })
+            });
+            
+            if (!res.ok) {
+                const err = await res.json();
+                alert(`Error: ${err.detail || "Desconocido"}`);
+            } else {
+                const data = await res.json();
+                alert(`¡${cantidad} items añadidos exitosamente al stock!\nNuevo stock: ${data.new_stock}`);
+                document.getElementById("newToolNumber").value = "";
+                cargarTodo();
+            }
+        });
+    }
+
+    const catForm = document.getElementById("createCategoryForm");
+    if (catForm) {
+        catForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const name = document.getElementById("newCategoryName").value.trim();
+            if (!name) return;
+
+            const res = await apiPost(`${API_URL}/categories/`, { name: name });
+            if (!res) {
+                alert("Error al crear categoría");
+            } else {
+                alert("Categoría creada: " + res.name);
+                document.getElementById("newCategoryName").value = "";
+                cargarTodo();
+            }
+        });
+    }
+});
+
+function cargarTodo() {
+    cargarHerramientas();
+    cargarSolicitudes();
+    cargarPrestamosActivos();
+    cargarHistorial();
+}
+
+async function cargarProfesores() {
+    const data = await apiGet(`${API_URL}/users/`);
+    if (!data) return;
+    const manualProfesor = document.getElementById("manualProfesor");
+    const returnProfesor = document.getElementById("returnProfesor");
+    if (manualProfesor) manualProfesor.innerHTML = '<option value="">Seleccionar Profesor</option>';
+    if (returnProfesor) returnProfesor.innerHTML = '<option value="">Seleccionar Profesor</option>';
+    data.forEach(u => {
+        if (manualProfesor) manualProfesor.innerHTML += `<option value="${u.id}">${u.name}</option>`;
+        if (returnProfesor) returnProfesor.innerHTML += `<option value="${u.id}">${u.name}</option>`;
+    });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const manualForm = document.getElementById("manualOrderForm");
+    if (manualForm) {
+        manualForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const user_id = parseInt(document.getElementById("manualProfesor").value);
+            const category_id = parseInt(document.getElementById("manualCategory").value);
+            const quantity = parseInt(document.getElementById("manualQuantity").value);
+            const description_loan = document.getElementById("manualDescription").value.trim();
+
+            if (!user_id || !category_id || quantity < 1) return alert("Complete todos los campos");
+
+            const res = await fetch(`${API_URL}/orders/manual`, {
+                method: "POST",
+                headers: getAuthHeaders(),
+                body: JSON.stringify({ user_id, category_id, quantity, description_loan })
+            });
+
+            if (!res.ok) {
+                const err = await res.json();
+                alert(`Error: ${err.detail || "Desconocido"}`);
+            } else {
+                alert("Pedido entregado correctamente");
+                document.getElementById("manualQuantity").value = "1";
+                cargarTodo();
+            }
+        });
+    }
+
+    const returnForm = document.getElementById("returnForm");
+    if (returnForm) {
+        returnForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const user_id = parseInt(document.getElementById("returnProfesor").value);
+            const barcode = document.getElementById("returnCategoryBarcode").value.trim();
+            const quantity = parseInt(document.getElementById("returnQuantity").value);
+            const description_return = document.getElementById("returnDescription").value.trim();
+
+            if (!user_id || !barcode || quantity < 1) return alert("Complete todos los campos");
+
+            const res = await fetch(`${API_URL}/loans/return`, {
+                method: "POST",
+                headers: getAuthHeaders(),
+                body: JSON.stringify({ category_barcode: barcode, user_id: user_id, quantity: quantity, description_return })
+            });
+
+            if (!res.ok) {
+                const err = await res.json();
+                showToast(`Error al devolver: ${err.detail || "Verifica los datos"}`, true);
+            } else {
+                showToast(`✔ ${quantity} herramientas devueltas correctamente`);
+                document.getElementById("returnQuantity").value = "1";
+                document.getElementById("returnCategoryBarcode").value = "";
+                
+                const returnList = document.getElementById("returnList");
+                const time = new Date().toLocaleTimeString();
+                returnList.innerHTML = `<div style="padding: 5px; border-bottom: 1px solid #eee; color: #155724; background-color: #d4edda; border-radius: 3px; margin-top: 5px;">✅ [${time}] ${quantity} devueltas de categoría <b>${barcode}</b>.</div>` + returnList.innerHTML;
+
+                cargarTodo();
+            }
+        });
+    }
+});
+
+async function cargarCategorias(){
+    const data = await apiGet(`${API_URL}/categories/`);
+    if (!data) return;
+    const select = document.getElementById("toolCategory");
+    const manualCategory = document.getElementById("manualCategory");
+    if (select) select.innerHTML = '<option value="">Seleccionar categoría</option>';
+    if (manualCategory) manualCategory.innerHTML = '<option value="">Seleccionar categoría</option>';
+    categoriesMap = {};
+    data.forEach(c => {
+        categoriesMap[c.id] = c.name;
+        if (select) select.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+        if (manualCategory) manualCategory.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+    });
+}
+
+// ================= INVENTARIO (HERRAMIENTAS DISPONIBLES Y TOTALES) =================
+async function cargarHerramientas(){
+    const summary = await apiGet(`${API_URL}/categories/summary`);
+    const list = document.getElementById("availableTools");
+    if (!list || !summary) return;
+    list.innerHTML = "";
+
+    summary.forEach(cat => {
+        if (cat.total > 0 || cat.available > 0) {
+            list.innerHTML += `
+                <div class="panol-item">
+                    <span><b>${cat.category_name}</b></span>
+                    <span>${cat.available} / ${cat.total}</span>
+                </div>
+            `;
+        }
+    });
+}
+
+// ================= PEDIDOS PENDIENTES =================
+async function cargarSolicitudes(){
+    const data = await apiGet(`${API_URL}/orders/pending`);
+    const list = document.getElementById("pendingList");
+    if (!list || !data) return;
+    list.innerHTML = "";
+
+    if (!data.length) {
+        list.innerHTML = "<p>No hay pedidos pendientes ni preparados</p>";
+        return;
+    }
+
+    const groupedByProf = {};
+    data.forEach(o => {
+        const profName = o.profesor || "Profesor " + o.user_id;
+        if (!groupedByProf[profName]) groupedByProf[profName] = [];
+        groupedByProf[profName].push(o);
+    });
+
+    Object.keys(groupedByProf).forEach(profName => {
+        let ordersHTML = groupedByProf[profName].map(o => {
+            let itemsHTML = o.items.map(i => {
+                const catName = categoriesMap[i.category_id] || i.category_name || `Categoría ${i.category_id}`;
+                return `<li style="margin-bottom: 3px;">• ${i.quantity} x ${catName}</li>`;
+            }).join("");
+
+            const estadoTexto = o.status === 'pendiente' ? 'Pendiente' : 'Preparado (Esperando retiro)';
+            const colorEstado = o.status === 'pendiente' ? '#ffc107' : '#28a745';
+            
+            let actionButton = "";
+            if (o.status === "pendiente") {
+                actionButton = `<button onclick="cambiarEstadoPedido(${o.id}, 'prepare')" style="background-color: #007bff; color: white; border-radius: 3px; border: none; padding: 5px 15px; cursor: pointer; height: fit-content;">Marcar Preparado</button>`;
+            } else if (o.status === "preparado") {
+                actionButton = `<button onclick="cambiarEstadoPedido(${o.id}, 'deliver')" style="background-color: #d9382f; color: white; border-radius: 3px; border: none; padding: 5px 15px; cursor: pointer; height: fit-content;">Entregar</button>`;
+            }
+
+            return `
+                <div style="border-left: 5px solid ${colorEstado}; padding: 10px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <span style="font-size: 0.9em; font-weight: bold; color: ${colorEstado};">[${estadoTexto}]</span>
+                        <ul style="list-style:none; padding:0; margin:5px 0 0 0; text-align:left; color:#fff;">${itemsHTML}</ul>
+                    </div>
+                    <div>${actionButton}</div>
+                </div>
+            `;
+        }).join("");
+
+        list.innerHTML += `
+            <div class="panol-item" style="display: block; margin-bottom: 15px; background-color: rgb(53, 48, 48);">
+                <div style="font-size: 1.1em; font-weight: bold; margin-bottom: 10px; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 5px;">
+                    👨‍🏫 ${profName}
+                </div>
+                ${ordersHTML}
+            </div>
+        `;
+    });
+}
+
+async function cambiarEstadoPedido(orderId, action) {
+    if (action === 'prepare') {
+        const res = await fetch(`${API_URL}/orders/${orderId}/prepare`, {
+            method: "PUT",
+            headers: getAuthHeaders()
+        });
+        if (res.ok) {
+            showToast("Pedido marcado como preparado.");
+            cargarTodo();
+        } else {
+            showToast("Error al preparar el pedido", true);
+        }
+    } else if (action === 'deliver') {
+        const nota = prompt("Ingrese nota de entrega (opcional):") || "";
+        const res = await fetch(`${API_URL}/orders/${orderId}/deliver`, {
+            method: "PUT",
+            headers: getAuthHeaders(),
+            body: JSON.stringify({ description_loan: nota })
+        });
+        if (res.ok) {
+            showToast("Pedido entregado al profesor.");
+            cargarTodo();
+        } else {
+            showToast("Error al entregar el pedido", true);
+        }
+    }
+}
+
+// ================= ACTIVOS AGRUPADOS =================
+async function cargarPrestamosActivos() {
+    const data = await apiGet(`${API_URL}/loans/active/by-professor`);
+    const list = document.getElementById("activeLoansList");
+    if (!list || !data) return;
+
+    list.innerHTML = "";
+
+    if (!data.length) {
+        list.innerHTML = "<p>No hay préstamos activos</p>";
+        return;
+    }
+
+    data.forEach(p => {
+        const grouped = {};
+        p.tools.forEach(t => {
+            if(!grouped[t.category]) grouped[t.category] = [];
+            grouped[t.category].push(t.barcode);
+        });
+
+        let toolsHTML = "";
+        let summaryTextArray = [];
+        Object.keys(grouped).forEach(catId => {
+            const catName = categoriesMap[catId] || `Categoría ${catId}`;
+            const barcodes = grouped[catId].join(", ");
+            const count = grouped[catId].length;
+            toolsHTML += `<li style="margin-bottom: 5px; padding: 8px 5px; border-bottom: 1px solid rgba(255,255,255,0.1); color: #fff;">${count}x <b>${catName}</b> <span style="opacity: 0.8;">(Códigos: ${barcodes})</span></li>`;
+            summaryTextArray.push(`${count} x ${catName}`);
+        });
+
+        const summaryRightText = "• " + summaryTextArray.join(", ");
+        const profIdClean = p.profesor.replace(/\s+/g, '_') + '_' + Math.floor(Math.random() * 1000);
+
+        list.innerHTML += `
+            <div style="margin-bottom: 15px;">
+                <div class="panol-item" style="margin-bottom: 0; align-items: center; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <span><b>${p.profesor}</b></span>
+                    <span style="color: #fff; opacity: 0.9;">${summaryRightText}</span>
+                    <button onclick="document.getElementById('detalles_${profIdClean}').style.display = document.getElementById('detalles_${profIdClean}').style.display === 'none' ? 'block' : 'none'" style="background-color: #007bff; color: white; border-radius: 3px; border: none; padding: 6px 15px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">Ver Detalles</button>
+                </div>
+                <div id="detalles_${profIdClean}" style="display: none; padding: 15px; background-color: rgb(53, 48, 48); border-radius: 0 0 5px 5px; margin-top: -3px; color: #fff;">
+                    <ul style="list-style: none; margin: 0; padding: 0;">
+                        ${toolsHTML}
+                    </ul>
+                </div>
+            </div>
+        `;
+    });
+}
+
+// ================= DEVOLUCIONES ESCANEO =================
+const returnInput = document.getElementById("returnScan");
+if (returnInput) {
+    returnInput.addEventListener("keypress", async function(e) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            const code = this.value.trim();
+            if (code) {
+                const res = await apiPost(`${API_URL}/loans/return`, { barcode: code });
+                if (res) {
+                    showToast(`✔ Herramienta ${code} devuelta correctamente`);
+                    this.value = "";
+                    
+                    const returnList = document.getElementById("returnList");
+                    const time = new Date().toLocaleTimeString();
+                    returnList.innerHTML = `<div style="padding: 5px; border-bottom: 1px solid #eee; color: #155724; background-color: #d4edda; border-radius: 3px; margin-top: 5px;">✅ [${time}] Código <b>${code}</b> devuelto y disponible.</div>` + returnList.innerHTML;
+
+                    cargarTodo();
+                } else {
+                    showToast("❌ Error al devolver. Asegúrate de que el código sea correcto y esté prestado.", true);
+                }
+            }
+        }
+    });
+}
+
+// ================= MODAL =================
+let currentOrderIds = [];
+
+function abrirModal(orderIds, requiredText) {
+    currentOrderIds = orderIds;
+    document.getElementById("scanInput").value = "";
+    
+    // Add required text to modal if it exists, else create it
+    let reqDiv = document.getElementById("modalRequiredItems");
+    if (!reqDiv) {
+        reqDiv = document.createElement("div");
+        reqDiv.id = "modalRequiredItems";
+        reqDiv.style.cssText = "background: #f8d7da; color: #721c24; padding: 10px; margin-bottom: 15px; border-radius: 5px; font-weight: bold;";
+        document.getElementById("scanInput").parentNode.insertBefore(reqDiv, document.getElementById("scanInput"));
+    }
+    reqDiv.textContent = requiredText;
+
+    document.getElementById("scanModal").style.display = "block";
+    document.getElementById("scanInput").focus();
+}
+
+function cerrarModal() {
+    document.getElementById("scanModal").style.display = "none";
+    currentOrderIds = [];
+}
+
+const scanInput = document.getElementById("scanInput");
+if (scanInput) {
+    scanInput.addEventListener("keypress", function(e) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            this.value = this.value.trim() + ", ";
+        }
+    });
+}
+
+async function confirmarEntrega() {
+    const textValue = document.getElementById("scanInput").value;
+    const scannedCodes = textValue.split(",").map(c => c.trim()).filter(c => c);
+
+    if (!currentOrderIds || currentOrderIds.length === 0 || scannedCodes.length === 0) {
+        return alert("Escanéa al menos una herramienta");
+    }
+    try {
+        const firstOrderId = currentOrderIds[0];
+        const res1 = await apiPost(`${API_URL}/orders/${firstOrderId}/fulfill`, { barcodes: scannedCodes });
+        if (!res1) return alert("Error al procesar la entrega. Verifica los códigos.");
+
+        for (let i = 1; i < currentOrderIds.length; i++) {
+            await apiPost(`${API_URL}/orders/${currentOrderIds[i]}/fulfill`, { barcodes: [] });
+        }
+        alert("¡Herramientas entregadas correctamente!");
+        cerrarModal();
+        cargarTodo();
+    } catch (e) {
+        console.error(e);
+        alert("Ocurrió un error al confirmar la entrega.");
+    }
+}
+
+async function devolver(code){
+    const res = await apiPost(`${API_URL}/loans/return`, { barcode: code });
+    if (!res) return showToast("Error al devolver", true);
+    showToast(`Herramienta ${code} devuelta correctamente`);
+    cargarTodo();
+}
+
+// ================= HISTORIAL Y REGISTROS =================
+let historyData = [];
+
+async function cargarHistorial() {
+    const dateFilter = document.getElementById("historyDate").value;
+    let url = `${API_URL}/loans/history`;
+    if (dateFilter) {
+        url += `?date_filter=${dateFilter}`;
+    }
+
+    const data = await apiGet(url);
+    const tbody = document.getElementById("historyTableBody");
+    
+    if (!tbody || !data) return;
+
+    historyData = data; 
+    tbody.innerHTML = "";
+
+    if (!data.length) {
+        tbody.innerHTML = `<tr><td colspan="5" style="padding: 8px; text-align: center; border: 1px solid #dee2e6;">No hay registros para la fecha seleccionada</td></tr>`;
+        return;
+    }
+
+    data.forEach(r => {
+        const prestamo = new Date(r.fecha_prestamo).toLocaleString();
+        const devolucion = r.fecha_devolucion ? new Date(r.fecha_devolucion).toLocaleString() : "Pendiente";
+        const estadoColor = r.estado === "active" ? "color: red;" : "color: green;";
+        const estadoTexto = r.estado === "active" ? "Prestado" : "Devuelto";
+        const panoleroName = r.panolero || "N/A";
+
+        let notas = "";
+        if (r.nota_entrega) notas += `[E: ${r.nota_entrega}] `;
+        if (r.nota_devolucion) notas += `[D: ${r.nota_devolucion}]`;
+
+        tbody.innerHTML += `
+            <tr>
+                <td style="padding: 8px; border: 1px solid #dee2e6;">${r.profesor}</td>
+                <td style="padding: 8px; border: 1px solid #dee2e6;">${panoleroName}</td>
+                <td style="padding: 8px; border: 1px solid #dee2e6;">${r.herramienta}</td>
+                <td style="padding: 8px; border: 1px solid #dee2e6;">${prestamo}</td>
+                <td style="padding: 8px; border: 1px solid #dee2e6;">${devolucion}</td>
+                <td style="padding: 8px; border: 1px solid #dee2e6; ${estadoColor}"><b>${estadoTexto}</b></td>
+                <td style="padding: 8px; border: 1px solid #dee2e6; font-size: 0.9em; color: #555;">${notas}</td>
+            </tr>
+        `;
+    });
+}
+
+function descargarExcel() {
+    if (!historyData || historyData.length === 0) {
+        showToast("No hay registros para descargar", true);
+        return;
+    }
+
+    let tableHTML = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+    <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+    <body>
+        <table border="1">
+            <thead>
+                <tr style="background-color: #f8f9fa;">
+                    <th>Profesor</th>
+                    <th>Pañolero</th>
+                    <th>Herramienta</th>
+                    <th>Fecha Préstamo</th>
+                    <th>Fecha Devolución</th>
+                    <th>Estado</th>
+                    <th>Notas</th>
+                </tr>
+            </thead>
+            <tbody>`;
+
+    historyData.forEach(r => {
+        const prestamo = r.fecha_prestamo ? new Date(r.fecha_prestamo).toLocaleString() : "";
+        const devolucion = r.fecha_devolucion ? new Date(r.fecha_devolucion).toLocaleString() : "Pendiente";
+        const estadoTexto = r.estado === "active" ? "Prestado" : "Devuelto";
+        const panoleroName = r.panolero || "N/A";
+
+        let notas = "";
+        if (r.nota_entrega) notas += `[E: ${r.nota_entrega}] `;
+        if (r.nota_devolucion) notas += `[D: ${r.nota_devolucion}]`;
+
+        tableHTML += `
+            <tr>
+                <td>${r.profesor}</td>
+                <td>${panoleroName}</td>
+                <td>${r.herramienta}</td>
+                <td>${prestamo}</td>
+                <td>${devolucion}</td>
+                <td>${estadoTexto}</td>
+                <td>${notas}</td>
+            </tr>`;
+    });
+
+    tableHTML += `</tbody></table></body></html>`;
+
+    const blob = new Blob([tableHTML], {
+        type: 'application/vnd.ms-excel'
+    });
+    
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `registro_panol_${document.getElementById("historyDate").value || 'todos'}.xls`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+</script>
+
+
+
+</html>

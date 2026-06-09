@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Portal Institucional</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="shortcut icon" href="media/imagen.ico" type="image/x-icon">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="js/config.js"></script>
+</head>
+
+<body>
+
+    <header class="main-header">
+        <!-- Espacio para imagen futura -->
+        <div class="logo-space">
+            <img src="media/logo.png" alt="logo" class="logo-img">
+        </div>
+
+        <!-- Título centrado -->
+        <div class="title-header">Escuela Técnica N°1 Nuestra Señora del Valle</div>
+
+        <!-- Botón hamburguesa -->
+        <button class="hamburger-btn" id="hamburgerBtn">☰</button>
+
+        <!-- Menú overlay -->
+        <div id="fullscreenMenu" class="fullscreen-menu-header">
+            <a href="../index.html">Inicio</a>
+            <a href="../temario.html">Termario</a>
+            <a href="sistema/login.html ">sesion</a>
+            <a href="../normativa.html">normativa</a>
+            <a href="#">Cerrar</a>
+        </div>
+        <script>
+            const hamburgerBtn = document.getElementById("hamburgerBtn");
+            const fullscreenMenu = document.getElementById("fullscreenMenu");
+
+            hamburgerBtn.addEventListener("click", () => {
+                fullscreenMenu.classList.toggle("show");
+            });
+
+            // Cerrar menú al tocar cualquier enlace
+            fullscreenMenu.querySelectorAll("a").forEach(link => {
+                link.addEventListener("click", () => {
+                    fullscreenMenu.classList.remove("show");
+                });
+            });
+
+            // Cerrar menú si clic fuera de los enlaces
+            fullscreenMenu.addEventListener("click", (e) => {
+                if (e.target === fullscreenMenu) {
+                    fullscreenMenu.classList.remove("show");
+                }
+            });
+        </script>
+    </header>
+
+    <main class="login-main">
+        <div class="login-box">
+            <h2 class="login-title">Iniciar Sesión</h2>
+
+            <form id="loginForm" class="login-form">
+                <input type="text" id="usuario" placeholder="Email" required>
+                <input type="password" id="password" placeholder="Contraseña" required>
+                <button type="submit" class="login-btn">Ingresar</button>
+            </form>
+
+            <p id="error" class="login-error"></p>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h4>Sobre nosotros</h4>
+                <p>Somos una Institución con mas de 75 años formando a tecnicos</p>
+            </div>
+            <div class="footer-section">
+                <h4>Enlaces</h4>
+                <ul>
+                    <li><a href="../index.html">Inicio</a></li>
+                    <li><a href="../contacto.html">Contacto</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Síguenos</h4>
+                <div class="social-icons">
+                    <a href="#"><img src="img/facebook.svg" alt="Facebook"></a>
+                    <a href="#"><img src="img/ig.svg.svg" alt="Instagram"></a>
+                </div>
+            </div>
+        </div>
+        <footer>
+            <div class="footer-bottom">
+                <p>
+                    © 2026 Portal Institucional |
+                    Desarrollado por
+                    <a href="https://github.com/alejogarciaDev" target="_blank">Alejo Técnica</a>
+                </p>
+
+            </div>
+
+
+        </footer>
+
+        <script>
+            const API_URL = window.API_AUTH;
+
+            const loginForm = document.getElementById("loginForm");
+            const errorP = document.getElementById("error");
+
+            loginForm.addEventListener("submit", async (e) => {
+                e.preventDefault();
+
+                const email = document.getElementById("usuario").value;
+                const password = document.getElementById("password").value;
+
+                try {
+                    const response = await fetch(`${API_URL}/auth/login`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ email, password })
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        errorP.textContent = data.detail || "Error al iniciar sesión";
+                        return;
+                    }
+
+                    // VALIDACIÓN
+                    if (!data.access_token || !data.user) {
+                        errorP.textContent = "Respuesta inválida del servidor";
+                        return;
+                    }
+
+                    const user = data.user;
+
+                    sessionStorage.setItem("token", data.access_token);
+                    sessionStorage.setItem("user_id", user.id);
+                    sessionStorage.setItem("role", user.role);
+                    sessionStorage.setItem("role_name", user.role_name || "");
+                    sessionStorage.setItem("name", user.name || "");
+
+                    // REDIRECCIÓN
+                    const role = Number(user.role);
+
+                    if (role === 1) window.location.href = "dashboard_ofalumnos.html";
+                    else if (role === 2) window.location.href = "dashboard_panol.html";
+                    else if (role === 3) window.location.href = "dashboard_admin.html";
+                    else if (role === 4) window.location.href = "dashboard_alumno.html";
+                    else if (role === 5) window.location.href = "dashboard_profesor.html";
+                    else errorP.textContent = "Rol no válido: " + role;
+
+                } catch (err) {
+                    console.error(err);
+                    errorP.textContent = "Error de conexión con el servidor";
+                }
+            });
+        </script>
+
+</body>
+
+</html>

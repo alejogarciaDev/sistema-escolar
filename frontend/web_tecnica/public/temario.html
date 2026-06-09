@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Portal Institucional</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="shortcut icon" href="media/imagen.ico" type="image/x-icon">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+
+<header class="main-header">
+    <!-- Espacio para imagen futura -->
+    <div class="logo-space" >
+        <img src="media/logo.png" alt="logo" class="logo-img">
+    </div>
+
+    <!-- Título centrado -->
+    <div class="title-header">Escuela Técnica N°1 Nuestra Señora del Valle</div>
+
+    <!-- Botón hamburguesa -->
+    <button class="hamburger-btn" id="hamburgerBtn">☰</button>
+
+    <!-- Menú overlay -->
+    <div id="fullscreenMenu" class="fullscreen-menu-header">
+        <a href="index.html">Inicio</a>
+        <a href="temario.html">Termario</a>
+        <a href="sistema/login.html ">sesion</a>
+        <a href="contacto.html">contacto</a>
+        <a href="#">Cerrar</a>
+    </div>
+    <script>
+    const hamburgerBtn = document.getElementById("hamburgerBtn");
+    const fullscreenMenu = document.getElementById("fullscreenMenu");
+
+    hamburgerBtn.addEventListener("click", () => {
+        fullscreenMenu.classList.toggle("show");
+    });
+
+    // Cerrar menú al tocar cualquier enlace
+    fullscreenMenu.querySelectorAll("a").forEach(link => {
+        link.addEventListener("click", () => {
+            fullscreenMenu.classList.remove("show");
+        });
+    });
+
+    // Cerrar menú si clic fuera de los enlaces
+    fullscreenMenu.addEventListener("click", (e) => {
+        if(e.target === fullscreenMenu){
+            fullscreenMenu.classList.remove("show");
+        }
+    });
+   </script>
+   </header>
+
+<main class="contenedor-temarios">
+
+
+    <h2 class="titulo">Temarios</h2>
+    <p></p>
+    <div class="bloque">
+
+        <!-- CICLO BÁSICO -->
+        <div class="item">
+            <button class="accordion-btn grande">Ciclo Básico</button>
+
+            <div class="contenido">
+
+                <!-- 1° Año -->
+                <div class="item">
+                    <button class="accordion-btn">1° Año</button>
+                    <div class="contenido">
+                        <ul>
+                            <li><a href="#">Ciencias Naturales</a></li>
+                            <li><a href="#">Ciencias Sociales</a></li>
+                            <li><a href="#">Educación Artística</a></li>
+                            <li><a href="#">Educación Física</a></li>
+                            <li><a href="#">Inglés</a></li>
+                            <li><a href="#">Matemática</a></li>
+                            <li><a href="#">Prácticas del Lenguaje</a></li>
+                            <li><a href="#">Construcción de la Ciudadanía</a></li>
+                        </ul>
+
+                        <p class="subtitulo-lista">TALLER</p>
+
+                        <ul>
+                            <li><a href="#">Lenguaje Tecnológico</a></li>
+                            <li><a href="#">Procedimientos Técnicos</a></li>
+                            <li><a href="#">Sistemas Tecnológicos</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 2° Año -->
+                <div class="item">
+                    <button class="accordion-btn">2° Año</button>
+                    <div class="contenido">
+                        <ul>
+                            <li><a href="#">Biología</a></li>
+                            <li><a href="#">Físico Química</a></li>
+                            <li><a href="#">Geografía</a></li>
+                            <li><a href="#">Historia</a></li>
+                            <li><a href="#">Construcción de la Ciudadanía v</a></li>
+                            <li><a href="#">Educación Física</a></li>
+                            <li><a href="#">Educación Artística</a></li>
+                            <li><a href="#">Inglés</a></li>
+                            <li><a href="#">Matemática</a></li>
+                            <li><a href="#">Prácticas del Lenguaje</a></li>
+                        </ul>
+
+                        <p class="subtitulo-lista">TALLER</p>
+
+                        <ul>
+                            <li><a href="#">Lenguaje Tecnológico</a></li>
+                            <li><a href="#">Procedimientos Técnicos</a></li>
+                            <li><a href="#">Sistemas Tecnológicos</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="item">
+                    <button class="accordion-btn">3° Año</button>
+                    <div class="contenido">
+                        <ul>
+                            <li><a href="#">Biología</a></li>
+                            <li><a href="#">Físico Química</a></li>
+                            <li><a href="#">Geografía</a></li>
+                            <li><a href="#">Historia</a></li>
+                            <li><a href="#">Construcción de la Ciudadanía v</a></li>
+                            <li><a href="#">Educación Física</a></li>
+                            <li><a href="#">Educación Artística</a></li>
+                            <li><a href="#">Inglés</a></li>
+                            <li><a href="#">Matemática</a></li>
+                            <li><a href="#">Prácticas del Lenguaje</a></li>
+                        </ul>
+
+                        <p class="subtitulo-lista">TALLER</p>
+
+                        <ul>
+                            <li><a href="#">Lenguaje Tecnológico</a></li>
+                            <li><a href="#">Procedimientos Técnicos</a></li>
+                            <li><a href="#">Sistemas Tecnológicos</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        
+<div class="item">
+    <button class="accordion-btn grande">Ciclo Superior</button>
+
+    <div class="contenido grid-especialidades">
+
+        <!-- INFORMÁTICA -->
+        <div>
+            <h4 class="subtitulo">Informática</h4>
+
+            <div class="item">
+                <button class="accordion-btn">4° Año</button>
+                <div class="contenido">
+                    <ul>
+                        <li><a href="#">Literatura</a></li>
+                        <li><a href="#">Inglés</a></li>
+                        <li><a href="#">Educación Física</a></li>
+                        <li><a href="#">Salud y Adolescencia</a></li>
+                        <li><a href="#">Historia</a></li>
+                        <li><a href="#">Geografía</a></li>
+                        <li><a href="#">Matemática-Ciclo Superior</a></li>
+                        <li><a href="#">Física</a></li>
+                        <li><a href="#">Química</a></li>
+                        <li><a href="#">Tecnologías Electrónicas</a></li>
+                    </ul>
+
+                    <p class="subtitulo-lista">TALLER</p>
+
+                    <ul>
+                        <li><a href="#">Dibujo Tecnológico</a></li>
+                        <li><a href="#">Máquinas Eléctricas y Automatismos</a></li>
+                        <li><a href="#">Diseño y Procesamiento Mecánico</a></li>
+                        <li><a href="#">Instalaciones y Aplicaciones de la Energía</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="item">
+                <button class="accordion-btn">5° Año</button>
+                <div class="contenido">
+                    <ul>
+                        <li><a href="#">Literatura</a></li>
+                        <li><a href="#">Inglés</a></li>
+                        <li><a href="#">Educación Física</a></li>
+                        <li><a href="#">Salud y Adolescencia</a></li>
+                        <li><a href="#">Historia</a></li>
+                        <li><a href="#">Geografía</a></li>
+                        <li><a href="#">Análisis Matemático</a></li>
+                        <li><a href="#">Sistemas Digitales</a></li>
+                        <li><a href="#">Teleinformática</a></li>
+                    </ul>
+
+                    <p class="subtitulo-lista">TALLER</p>
+
+                    <ul>
+                        <li><a href="#">Laboratorio Hardware</a></li>
+                        <li><a href="#">Laboratorio de Sistemas Operativos</a></li>
+                        <li><a href="#">Laboratorio de Aplicaciones</a></li>
+                        <li><a href="#">Laboratorio de programación</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="item">
+                <button class="accordion-btn">6° Año</button>
+                <div class="contenido">
+                    <ul>
+                        <li><a href="#">Literatura</a></li>
+                        <li><a href="#">Inglés</a></li>
+                        <li><a href="#">Educación Física</a></li>
+                        <li><a href="#">Filosofía</a></li>
+                        <li><a href="#">Arte</a></li>
+                        <li><a href="#">Matemática Aplicada</a></li>
+                        <li><a href="#">Derechos del Trabajo</a></li>
+                        <li><a href="#">Sistemas Digitales</a></li>
+                        <li><a href="#">Investigación Operativa</a></li>
+                    </ul>
+
+                    <p class="subtitulo-lista">TALLER</p>
+
+                    <ul>
+                        <li><a href="#">Laboratorio Hardware</a></li>
+                        <li><a href="#">Laboratorio de Sistemas Operativos</a></li>
+                        <li><a href="#">Laboratorio de Aplicaciones</a></li>
+                        <li><a href="#">Laboratorio de programación</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="item">
+                <button class="accordion-btn">7° Año</button>
+                <div class="contenido">
+                    <ul>
+                        <li><a href="#">Emprendimientos Productivos y Desarrollo Local</a></li>
+                        <li><a href="#">Evaluación de Proyectos</a></li>
+                        <li><a href="#">Modelos y Sistemas</a></li>
+                        <li><a href="#">Base de Datos</a></li>
+                    </ul>
+
+                    <p class="subtitulo-lista">TALLER</p>
+
+                    <ul>
+                        <li><a href="#">Proyecto, Diseño e implementación de Sistemas Computacionales</a></li>
+                        <li><a href="#">Instalación, Mantenimiento y Reparación de Sistemas Computacionales</a></li>
+                        <li><a href="#">Instalación, Mantenimiento y Reparación de Redes Informáticas</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ELECTROMECÁNICA -->
+        <div>
+            <h4 class="subtitulo">Electromecánica</h4>
+
+            <div class="item">
+                <button class="accordion-btn">4° Año</button>
+                <div class="contenido">
+                    <ul>
+                        <li><a href="#">Literatura</a></li>
+                        <li><a href="#">Inglés</a></li>
+                        <li><a href="#">Educación Física</a></li>
+                        <li><a href="#">Salud y Adolescencia</a></li>
+                        <li><a href="#">Historia</a></li>
+                        <li><a href="#">Geografía</a></li>
+                        <li><a href="#">Matemática-Ciclo Superior</a></li>
+                        <li><a href="#">Física</a></li>
+                        <li><a href="#">Química</a></li>
+                        <li><a href="#">Conocimiento de los Materiales</a></li>
+                    </ul>
+
+                    <p class="subtitulo-lista">TALLER</p>
+
+                    <ul>
+                        <li><a href="#">Dibujo Tecnológico</a></li>
+                        <li><a href="#">Máquinas Eléctricas y Automatismos</a></li>
+                        <li><a href="#">Diseño y Procesamiento Mecánico</a></li>
+                        <li><a href="#">Instalaciones y Aplicaciones de la Energía</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="item">
+                <button class="accordion-btn">5° Año</button>
+                <div class="contenido">
+                    <ul>
+                        <li><a href="#">Literatura</a></li>
+                        <li><a href="#">Inglés</a></li>
+                        <li><a href="#">Educación Física</a></li>
+                        <li><a href="#">Salud y Adolescencia</a></li>
+                        <li><a href="#">Historia</a></li>
+                        <li><a href="#">Geografía</a></li>
+                        <li><a href="#">Análisis Matemático</a></li>
+                        <li><a href="#">Resistencia y Ensayos de los Materiales</a></li>
+                        <li><a href="#">Electrotecnia</a></li>
+                        <li><a href="#">Mecánica y Mecanismos</a></li>
+                    </ul>
+
+                    <p class="subtitulo-lista">TALLER</p>
+
+                    <ul>
+                        <li><a href="#">Máquinas Eléctricas y Automatismos</a></li>
+                        <li><a href="#">Diseño y Procesamiento Mecánico</a></li>
+                        <li><a href="#">Instalaciones y Aplicaciones de la Energía</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="item">
+                <button class="accordion-btn">6° Año</button>
+                <div class="contenido">
+                    <ul>
+                        <li><a href="#">Literatura</a></li>
+                        <li><a href="#">Inglés</a></li>
+                        <li><a href="#">Educación Física</a></li>
+                        <li><a href="#">Filosofía</a></li>
+                        <li><a href="#">Arte</a></li>
+                        <li><a href="#">Matemática Aplicada</a></li>
+                        <li><a href="#">Derechos del Trabajo</a></li>
+                        <li><a href="#">Termodinámica y Máquinas Térmicas</a></li>
+                        <li><a href="#">Electrotecnia</a></li>
+                        <li><a href="#">Sistemas Mecánicos</a></li>
+                    </ul>
+
+                    <p class="subtitulo-lista">TALLER</p>
+
+                    <ul>
+                        <li><a href="#">Máquinas Eléctricas y Automatismos</a></li>
+                        <li><a href="#">Diseño y Procesamiento Mecánico</a></li>
+                        <li><a href="#">Instalaciones y Aplicaciones de la Energía</a></li>
+                        <li><a href="#">Laboratorio de Mediciones Eléctricas</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="item">
+                <button class="accordion-btn">7° Año</button>
+                <div class="contenido">
+                    <ul>
+                        <li><a href="#">Emprendimientos Productivos y Desarrollo Local</a></li>
+                        <li><a href="#">Mantenimiento y Montaje Electromecánico</a></li>
+                        <li><a href="#">Sistemas Mecánicos</a></li>
+                        <li><a href="#">Máquinas Eléctricas</a></li>
+                        <li><a href="#">Seguridad, Higiene y Protección Ambiental</a></li>
+                        <li><a href="#">Electrónica Industrial</a></li>
+                    </ul>
+
+                    <p class="subtitulo-lista">TALLER</p>
+
+                    <ul>
+                        <li><a href="#">Laboratorio de Metrología y Control de Calidad</a></li>
+                        <li><a href="#">Proyecto y Diseño de Instalaciones Eléctricas</a></li>
+                        <li><a href="#">Proyecto y Diseño Electromecánico</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+    </div>
+
+</main>
+<!-- FOOTER -->
+    <footer class="footer">
+    <div class="footer-container">
+        <div class="footer-section">
+            <h4>🏫 E.E.S.T. N°1 Muñiz</h4>
+            <p>Escuela de Educación Secundaria Técnica N°1 "Nuestra Señora del Valle".<br>Institución pública estatal con más de 75 años formando técnicos.</p>
+        </div>
+        <div class="footer-section">
+            <h4>🔗 Navegación</h4>
+            <ul>
+                <li><a href="index.html">🏠 Inicio</a></li>
+                <li><a href="temario.html">📋 Temario</a></li>
+                <li><a href="normativa.html">📜 Normativa</a></li>
+                <li><a href="informatica.html">💻 Informática</a></li>
+                <li><a href="electromecanica.html">⚙️ Electromecánica</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h4>📞 Contacto</h4>
+            <ul>
+                <li>📍 Farías 480, Muñiz</li>
+                <li>🏙️ San Miguel, Bs. As.</li>
+                <li>📞 (011) 4664-0516</li>
+                <li>📅 Fundada en 1949</li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2026 E.E.S.T. N°1 Muñiz — Portal Institucional |
+            Desarrollado por <a href="https://github.com/alejogarciaDev" target="_blank" class="dev-name">Alejo García</a>
+        </p>
+    </div>
+</footer>
+
+<script>
+document.querySelectorAll(".accordion-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+        const item = btn.parentElement;
+
+        item.classList.toggle("active");
+
+        const contenido = item.querySelector(":scope > .contenido");
+
+        if (contenido) {
+            contenido.style.display =
+                contenido.style.display === "block" ? "none" : "block";
+        }
+    });
+});
+</script>
+
+
+
+</body>
+</html>

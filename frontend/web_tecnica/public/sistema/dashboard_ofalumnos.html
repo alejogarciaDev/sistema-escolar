@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Oficina de Alumnos</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="shortcut icon" href="media/imagen.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .dash-switcher { position:relative; display:inline-block; }
+        .dash-btn { background:#7a0808; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-size:0.85rem; }
+        .dash-btn:hover { background:#5c0606; }
+        .dash-dropdown { display:none; position:absolute; right:0; top:100%; background:#222; border-radius:6px; box-shadow:0 4px 12px rgba(0,0,0,0.4); z-index:1000; min-width:200px; overflow:hidden; }
+        .dash-dropdown.show { display:block; }
+        .dash-dropdown a { display:block; padding:10px 16px; color:#ddd; text-decoration:none; font-size:0.9rem; border-bottom:1px solid #444; }
+        .dash-dropdown a:hover { background:#333; color:#e74c3c; }
+        .dash-dropdown a:last-child { border-bottom:none; }
+        .dash-dropdown .current { background:#3a1515; color:#e74c3c; font-weight:bold; }
+
+        .data-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:10px 0; }
+        .data-field { padding:8px 12px; background:#2a2a2a; border-radius:6px; }
+        .data-field label { font-size:0.75rem; color:#aaa; text-transform:uppercase; display:block; }
+        .data-field span { font-size:1rem; font-weight:500; color:#eee; }
+        .acciones-alumno { display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; }
+        .btn-edit { background:#f39c12; color:white; border:none; padding:6px 14px; border-radius:4px; cursor:pointer; }
+        .btn-edit:hover { background:#d68910; }
+        .btn-danger { background:#e74c3c; color:white; border:none; padding:6px 14px; border-radius:4px; cursor:pointer; }
+        .btn-danger:hover { background:#c0392b; }
+        .btn-success { background:#27ae60; color:white; border:none; padding:6px 14px; border-radius:4px; cursor:pointer; }
+        .btn-success:hover { background:#229954; }
+        .btn-primary { background:#9b0b0b; color:white; border:none; padding:6px 14px; border-radius:4px; cursor:pointer; }
+        .btn-primary:hover { background:#7a0808; }
+
+        .modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; justify-content:center; align-items:center; }
+        .modal-overlay.show { display:flex; }
+        .modal-box { background:#2a2a2a; border-radius:8px; padding:24px; width:90%; max-width:500px; max-height:80vh; overflow-y:auto; box-shadow:0 8px 24px rgba(0,0,0,0.2); color:#eee; }
+        .modal-box h3 { margin-top:0; color:#e74c3c; }
+        .modal-box .panol-item { margin-bottom:8px; }
+        .modal-box input, .modal-box select { width:100%; padding:8px; border:1px solid #555; border-radius:4px; box-sizing:border-box; background:#333; color:#eee; }
+
+        .historial-row { display:flex; align-items:center; gap:8px; padding:8px; border-bottom:1px solid #444; }
+        .historial-row .tag { display:inline-block; padding:2px 8px; border-radius:10px; font-size:0.8rem; }
+        .tag-repitio { background:#fde8e8; color:#c0392b; }
+        .tag-aprobo { background:#e8fde8; color:#27ae60; }
+
+        .section-title { display:flex; align-items:center; gap:8px; cursor:pointer; user-select:none; }
+        .section-title .arrow { transition:transform 0.2s; }
+        .section-title .arrow.open { transform:rotate(90deg); }
+        .section-content { overflow:hidden; transition:max-height 0.3s ease; max-height:0; }
+        .section-content.open { max-height:2000px; }
+
+        @media (max-width:600px) {
+            .data-grid { grid-template-columns:1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="logo-space">
+            <img src="media/logo.png" alt="logo" class="logo-img">
+        </div>
+        <div class="title-header">Oficina de alumnos</div>
+        <div class="dash-switcher">
+            <button class="dash-btn" onclick="toggleDashDropdown()">⬇ Panel Oficina Alumnos</button>
+            <div id="dashDropdown" class="dash-dropdown"></div>
+        </div>
+        <button class="hamburger-btn" id="hamburgerBtn">☰</button>
+        <div id="fullscreenMenu" class="fullscreen-menu-header">
+            <a href="../index.html">Inicio</a>
+            <a href="../temario.html">Temario</a>
+            <a href="sistema/login.html">sesion</a>
+            <a href="../normativa.html">normativa</a>
+            <a href="#">Cerrar</a>
+        </div>
+        <script>
+            const hamburgerBtn = document.getElementById("hamburgerBtn");
+            const fullscreenMenu = document.getElementById("fullscreenMenu");
+            hamburgerBtn.addEventListener("click", () => fullscreenMenu.classList.toggle("show"));
+            fullscreenMenu.querySelectorAll("a").forEach(link => {
+                link.addEventListener("click", () => fullscreenMenu.classList.remove("show"));
+            });
+            fullscreenMenu.addEventListener("click", (e) => {
+                if (e.target === fullscreenMenu) fullscreenMenu.classList.remove("show");
+            });
+        </script>
+    </header>
+
+    <main>
+        <section class="admin-section">
+            <h2>Gestión de Alumnos</h2>
+        </section>
+
+        <!-- CREAR -->
+        <section class="admin-section">
+            <h3>Crear Alumno</h3>
+            <div class="panol-item"><input id="nuevoDni" placeholder="DNI"></div>
+            <div class="panol-item"><input id="nuevoNombre" placeholder="Nombre"></div>
+            <div class="panol-item"><input id="nuevoApellido" placeholder="Apellido"></div>
+            <div class="panol-item">
+                <button class="btn-primary" onclick="crearAlumno()">Crear Alumno</button>
+            </div>
+        </section>
+
+        <!-- BUSCAR -->
+        <section class="admin-section">
+            <h3>Buscar Alumno</h3>
+            <div class="panol-item" style="display:flex; gap:8px;">
+                <input id="dniBusqueda" placeholder="DNI" style="flex:1;">
+                <button class="btn-primary" onclick="buscarAlumno()">Buscar</button>
+            </div>
+            <div id="infoAlumno"></div>
+        </section>
+
+        <!-- ARCHIVOS LEGAJO -->
+        <section class="admin-section">
+            <div class="section-title" onclick="toggleSection('archivosSection')">
+                <span class="arrow" id="arrowArchivos">▶</span>
+                <h3 style="margin:0;">Legajo - Archivos</h3>
+            </div>
+            <div id="archivosSection" class="section-content">
+                <div class="panol-item" style="display:flex; gap:8px;">
+                    <input id="dniArchivo" placeholder="DNI alumno" style="flex:1;">
+                    <button class="btn-primary" onclick="cargarArchivos()">Ver legajo</button>
+                </div>
+                <div class="panol-item" style="display:flex; gap:8px;">
+                    <input type="file" id="fileAlumno" style="flex:1;">
+                    <button class="btn-success" onclick="subirArchivo()">Subir archivo</button>
+                </div>
+                <div id="listaArchivos"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- MODAL EDITAR ALUMNO -->
+    <div class="modal-overlay" id="modalEditar">
+        <div class="modal-box">
+            <h3>Editar Alumno</h3>
+            <input type="hidden" id="editDni">
+            <div class="panol-item"><input id="editNombre" placeholder="Nombre"></div>
+            <div class="panol-item"><input id="editApellido" placeholder="Apellido"></div>
+            <div class="panol-item"><input id="editFolio" placeholder="N° Folio"></div>
+            <div class="panol-item"><input id="editLegajo" placeholder="N° Legajo"></div>
+            <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:16px;">
+                <button class="btn-danger" onclick="cerrarModal()">Cancelar</button>
+                <button class="btn-success" onclick="guardarEdicion()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL AGREGAR HISTORIAL -->
+    <div class="modal-overlay" id="modalHistorial">
+        <div class="modal-box">
+            <h3>Agregar Año / Curso</h3>
+            <input type="hidden" id="histDni">
+            <div class="panol-item"><input id="histAnio" placeholder="Año lectivo (ej: 2024)"></div>
+            <div class="panol-item"><input id="histCurso" placeholder="Curso (ej: 1° A)"></div>
+            <div class="panol-item">
+                <label><input type="checkbox" id="histRepitio"> Repitió</label>
+            </div>
+            <div class="panol-item"><textarea id="histObs" placeholder="Observaciones" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; box-sizing:border-box;"></textarea></div>
+            <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:16px;">
+                <button class="btn-danger" onclick="cerrarModalHistorial()">Cancelar</button>
+                <button class="btn-success" onclick="guardarHistorial()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h4>Sobre nosotros</h4>
+                <p>Somos una Institución con mas de 75 años formando a tecnicos</p>
+            </div>
+            <div class="footer-section">
+                <h4>Enlaces</h4>
+                <ul>
+                    <li><a href="../index.html">Inicio</a></li>
+                    <li><a href="../contacto.html">Contacto</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Síguenos</h4>
+                <div class="social-icons">
+                    <a href="#"><img src="img/facebook.svg" alt="Facebook"></a>
+                    <a href="#"><img src="img/ig.svg.svg" alt="Instagram"></a>
+                </div>
+            </div>
+        </div>
+        <footer>
+            <div class="footer-bottom">
+                <p>© 2026 Portal Institucional | Desarrollado por <a href="https://github.com/alejogarciaDev" target="_blank">Alejo Técnica</a></p>
+            </div>
+        </footer>
+    </footer>
+</body>
+
+<script src="js/config.js"></script>
+<script>
+    const API_URL = window.API_AUTH;
+
+    function getAuthHeaders() {
+        const token = sessionStorage.getItem("token");
+        if (!token) {
+            alert("Sesión expirada");
+            window.location.href = "login.html";
+            throw new Error("No session");
+        }
+        return {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+        };
+    }
+
+    // ---- CREAR ALUMNO ----
+    async function crearAlumno() {
+        const dni = document.getElementById("nuevoDni").value.trim();
+        const nombre = document.getElementById("nuevoNombre").value.trim();
+        const apellido = document.getElementById("nuevoApellido").value.trim();
+        if (!dni || !nombre || !apellido) return alert("Completar todos los campos");
+
+        const res = await fetch(`${API_URL}/alumnos/`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+            body: JSON.stringify({ dni, nombre, apellido })
+        });
+        if (!res.ok) {
+            const err = await res.json();
+            return alert("Error: " + (err.detail || "Error al crear"));
+        }
+        alert("Alumno creado");
+        document.getElementById("nuevoDni").value = "";
+        document.getElementById("nuevoNombre").value = "";
+        document.getElementById("nuevoApellido").value = "";
+    }
+
+    // ---- BUSCAR ALUMNO ----
+    async function buscarAlumno() {
+        const dni = document.getElementById("dniBusqueda").value.trim();
+        if (!dni) return;
+
+        const res = await fetch(`${API_URL}/alumnos/${dni}`, { headers: getAuthHeaders() });
+        const div = document.getElementById("infoAlumno");
+
+        if (!res.ok) {
+            div.innerHTML = '<div class="panol-item" style="color:#e74c3c;">No encontrado</div>';
+            return;
+        }
+
+        const a = await res.json();
+        let historialHtml = "";
+
+        if (a.historial && a.historial.length > 0) {
+            historialHtml = a.historial.map(h => `
+                <div class="historial-row">
+                    <strong>${h.anio}</strong> - ${h.curso}
+                    <span class="tag ${h.repitio ? 'tag-repitio' : 'tag-aprobo'}">${h.repitio ? 'Repitió' : 'Regular'}</span>
+                    ${h.observaciones ? `<span style="color:#666;font-size:0.85rem;">— ${h.observaciones}</span>` : ''}
+                    <button class="btn-danger" style="padding:2px 8px;font-size:0.75rem;margin-left:auto;" onclick="eliminarHistorial(${h.id}, '${a.dni}')">✕</button>
+                </div>
+            `).join("");
+        } else {
+            historialHtml = '<div style="color:#999;padding:8px;">Sin historial académico</div>';
+        }
+
+        div.innerHTML = `
+            <div style="background:#2a2a2a;border-radius:8px;padding:16px;margin-top:12px;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                <div class="data-grid">
+                    <div class="data-field"><label>Nombre</label><span>${a.nombre} ${a.apellido}</span></div>
+                    <div class="data-field"><label>DNI</label><span>${a.dni}</span></div>
+                    <div class="data-field"><label>N° Folio</label><span>${a.folio || '—'}</span></div>
+                    <div class="data-field"><label>N° Legajo</label><span>${a.legajo || '—'}</span></div>
+                </div>
+                <div class="acciones-alumno">
+                    <button class="btn-edit" onclick="abrirModalEditar('${a.dni}', '${a.nombre}', '${a.apellido}', '${a.folio || ''}', '${a.legajo || ''}')">✏ Editar datos</button>
+                    <button class="btn-success" onclick="abrirModalHistorial('${a.dni}')">+ Agregar año/curso</button>
+                </div>
+
+                <hr style="margin:16px 0;border:none;border-top:1px solid #eee;">
+                <h4 style="margin:0 0 8px 0;">Historial Académico</h4>
+                <div id="historialContainer">${historialHtml}</div>
+            </div>
+        `;
+    }
+
+    // ---- EDITAR ALUMNO (MODAL) ----
+    function abrirModalEditar(dni, nombre, apellido, folio, legajo) {
+        document.getElementById("editDni").value = dni;
+        document.getElementById("editNombre").value = nombre;
+        document.getElementById("editApellido").value = apellido;
+        document.getElementById("editFolio").value = folio;
+        document.getElementById("editLegajo").value = legajo;
+        document.getElementById("modalEditar").classList.add("show");
+    }
+
+    function cerrarModal() {
+        document.getElementById("modalEditar").classList.remove("show");
+    }
+
+    async function guardarEdicion() {
+        const dni = document.getElementById("editDni").value;
+        const data = {
+            nombre: document.getElementById("editNombre").value.trim(),
+            apellido: document.getElementById("editApellido").value.trim(),
+            folio: document.getElementById("editFolio").value.trim(),
+            legajo: document.getElementById("editLegajo").value.trim()
+        };
+        if (!data.nombre || !data.apellido) return alert("Nombre y apellido son obligatorios");
+
+        const res = await fetch(`${API_URL}/alumnos/${dni}`, {
+            method: "PUT",
+            headers: getAuthHeaders(),
+            body: JSON.stringify(data)
+        });
+        if (!res.ok) {
+            const err = await res.json();
+            return alert("Error: " + (err.detail || "Error al actualizar"));
+        }
+        alert("Datos actualizados");
+        cerrarModal();
+        buscarAlumno();
+    }
+
+    // ---- HISTORIAL ACADÉMICO ----
+    function abrirModalHistorial(dni) {
+        document.getElementById("histDni").value = dni;
+        document.getElementById("histAnio").value = "";
+        document.getElementById("histCurso").value = "";
+        document.getElementById("histRepitio").checked = false;
+        document.getElementById("histObs").value = "";
+        document.getElementById("modalHistorial").classList.add("show");
+    }
+
+    function cerrarModalHistorial() {
+        document.getElementById("modalHistorial").classList.remove("show");
+    }
+
+    async function guardarHistorial() {
+        const dni = document.getElementById("histDni").value;
+        const data = {
+            anio: document.getElementById("histAnio").value.trim(),
+            curso: document.getElementById("histCurso").value.trim(),
+            repitio: document.getElementById("histRepitio").checked,
+            observaciones: document.getElementById("histObs").value.trim() || null
+        };
+        if (!data.anio || !data.curso) return alert("Año y curso son obligatorios");
+
+        const res = await fetch(`${API_URL}/alumnos/${dni}/historial`, {
+            method: "POST",
+            headers: getAuthHeaders(),
+            body: JSON.stringify(data)
+        });
+        if (!res.ok) {
+            const err = await res.json();
+            return alert("Error: " + (err.detail || "Error al agregar historial"));
+        }
+        alert("Historial agregado");
+        cerrarModalHistorial();
+        buscarAlumno();
+    }
+
+    async function eliminarHistorial(id, dni) {
+        if (!confirm("¿Eliminar este registro del historial?")) return;
+        const res = await fetch(`${API_URL}/alumnos/historial/${id}`, {
+            method: "DELETE",
+            headers: getAuthHeaders()
+        });
+        if (!res.ok) return alert("Error al eliminar");
+        buscarAlumno();
+    }
+
+    // ---- ARCHIVOS (LEGAJO) ----
+    async function subirArchivo() {
+        const dni = document.getElementById("dniArchivo").value.trim();
+        const file = document.getElementById("fileAlumno").files[0];
+        if (!dni || !file) return alert("Completar datos");
+
+        const formData = new FormData();
+        formData.append("file", file);
+        const headers = getAuthHeaders();
+        delete headers["Content-Type"];
+
+        const res = await fetch(`${API_URL}/archivos/alumno/${dni}`, {
+            method: "POST",
+            headers: headers,
+            body: formData
+        });
+        if (!res.ok) {
+            const err = await res.text();
+            return alert("Error al subir: " + err);
+        }
+        alert("Archivo subido");
+        cargarArchivos();
+    }
+
+    async function cargarArchivos() {
+        const dni = document.getElementById("dniArchivo").value.trim();
+        const res = await fetch(`${API_URL}/archivos/alumno/${dni}`, { headers: getAuthHeaders() });
+        const div = document.getElementById("listaArchivos");
+        div.innerHTML = "";
+
+        if (!res.ok) {
+            div.innerHTML = "<p style='color:#999;'>No hay archivos</p>";
+            return;
+        }
+
+        const archivos = await res.json();
+        if (!archivos.length) {
+            div.innerHTML = "<p style='color:#999;'>No hay archivos cargados</p>";
+            return;
+        }
+
+        archivos.forEach(a => {
+            div.innerHTML += `
+                <div class="panol-item archivo-item" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+                    <span class="archivo-nombre" title="${a.nombre_archivo}">📄 ${a.nombre_archivo}</span>
+                    <div class="acciones" style="display:flex;gap:4px;">
+                        <button class="btn-primary" onclick="verArchivo(${a.id}, '${a.tipo}')">👁 Ver</button>
+                        <button class="btn-success" onclick="descargarArchivo(${a.id})">⬇ Descargar</button>
+                        <button class="btn-edit" onclick="imprimirArchivo(${a.id})">🖨 Imprimir</button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    function verArchivo(id, tipo) {
+        const url = `${API_URL}/archivos/ver/${id}`;
+        const visibles = ["pdf","png","jpg","jpeg","gif","webp"];
+        if (visibles.includes(tipo.toLowerCase())) {
+            window.open(url, "_blank");
+            return;
+        }
+        const viewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(url)}&embedded=true`;
+        const win = window.open(viewerUrl, "_blank");
+        setTimeout(() => {
+            if (!win || win.closed || win.location.href === "about:blank") {
+                alert("No se pudo visualizar online. Se descargará el archivo.");
+                window.open(url, "_blank");
+            }
+        }, 2000);
+    }
+
+    function descargarArchivo(id) {
+        window.open(`${API_URL}/archivos/ver/${id}`, "_blank");
+    }
+
+    function imprimirArchivo(id) {
+        const url = `${API_URL}/archivos/ver/${id}`;
+        const win = window.open(url, "_blank");
+        win.onload = () => win.print();
+    }
+
+    // ---- TOGGLE SECTION ----
+    function toggleSection(id) {
+        const el = document.getElementById(id);
+        const arrow = document.getElementById("arrow" + id.replace("Section",""));
+        el.classList.toggle("open");
+        arrow.classList.toggle("open");
+    }
+
+    // ---- SELECTOR DE DASHBOARDS ----
+    const CURRENT_DASHBOARD = "ofalumnos";
+
+    function toggleDashDropdown() {
+        document.getElementById('dashDropdown').classList.toggle('show');
+    }
+
+    document.addEventListener('click', function(e) {
+        const sw = document.querySelector('.dash-switcher');
+        if (sw && !sw.contains(e.target)) {
+            document.getElementById('dashDropdown').classList.remove('show');
+        }
+    });
+
+    async function cargarSelectorDashboards() {
+        try {
+            const res = await fetch(API_URL + '/auth/mis-dashboards', { headers: getAuthHeaders() });
+            if (!res.ok) return;
+            const dashboards = await res.json();
+            const dd = document.getElementById('dashDropdown');
+            dd.innerHTML = '';
+            dashboards.forEach(d => {
+                if (d.id === CURRENT_DASHBOARD) {
+                    dd.innerHTML += '<a href="#" class="current">✅ ' + d.label + '</a>';
+                } else {
+                    dd.innerHTML += '<a href="' + d.url + '">➡ ' + d.label + '</a>';
+                }
+            });
+        } catch (e) {}
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        cargarSelectorDashboards();
+    });
+</script>
+</html>

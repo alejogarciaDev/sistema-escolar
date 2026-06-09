@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>E.E.S.T. N°1 Muñiz — Nuestra Señora del Valle | Portal Institucional</title>
+    <meta name="description" content="Escuela de Educación Secundaria Técnica N°1 Nuestra Señora del Valle, Muñiz, Buenos Aires. Especialidades en Informática y Electromecánica. Más de 75 años formando técnicos.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="shortcut icon" href="media/imagen.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="main-header">
+    <div class="logo-space">
+        <img src="media/logo.png" alt="logo" class="logo-img">
+    </div>
+    <div class="title-header">Escuela Técnica N°1 Nuestra Señora del Valle</div>
+    <button class="hamburger-btn" id="hamburgerBtn">☰</button>
+    <div id="fullscreenMenu" class="fullscreen-menu-header">
+        <a href="index.html">Inicio</a>
+        <a href="temario.html">Temario</a>
+        <a href="sistema/login.html">Sesión</a>
+        <a href="normativa.html">Normativa</a>
+        <a href="#contacto">Contacto</a>
+        <a href="#">Cerrar</a>
+    </div>
+    <script>
+    const hamburgerBtn = document.getElementById("hamburgerBtn");
+    const fullscreenMenu = document.getElementById("fullscreenMenu");
+    hamburgerBtn.addEventListener("click", () => { fullscreenMenu.classList.toggle("show"); });
+    fullscreenMenu.querySelectorAll("a").forEach(link => {
+        link.addEventListener("click", () => { fullscreenMenu.classList.remove("show"); });
+    });
+    fullscreenMenu.addEventListener("click", (e) => {
+        if(e.target === fullscreenMenu){ fullscreenMenu.classList.remove("show"); }
+    });
+    </script>
+    </header>
+
+    <main class="main">
+
+  <!-- HERO -->
+  <section class="hero" id="heroSection">
+    <canvas id="starfieldCanvas"></canvas>
+    <div class="hero-overlay"></div>
+    <div class="hero-center">
+      <div class="shield-3d-wrapper" id="shield3d">
+        <div class="shield-3d-inner">
+          <img src="media/escudo3d.png" alt="Escudo E.E.S.T. N°1 Muñiz" class="shield-img" id="shieldImg">
+        </div>
+        <div class="shield-shadow"></div>
+      </div>
+      <h1 class="hero-title">E.E.S.T. N°1</h1>
+      <p class="hero-subtitle">Nuestra Señora del Valle</p>
+      <p class="hero-location">Muñiz, Buenos Aires</p>
+      <a href="#sobre" class="hero-scroll-btn" id="heroScrollBtn">
+        <span>Conocé más</span>
+        <div class="scroll-arrow">↓</div>
+      </a>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats-section reveal">
+    <div class="stats-container">
+      <div class="stat-item">
+        <span class="stat-number" data-target="75">0</span><span class="stat-suffix">+</span>
+        <p class="stat-label">Años de historia</p>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number" data-target="1949">0</span>
+        <p class="stat-label">Año de fundación</p>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number" data-target="2">0</span>
+        <p class="stat-label">Especialidades técnicas</p>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number" data-target="15000">0</span><span class="stat-suffix">+</span>
+        <p class="stat-label">Egresados históricos</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOBRE -->
+  <section class="about reveal" id="sobre">
+    <div class="container">
+      <h2>Sobre la institución</h2>
+      <p class="about-intro">
+        Fundada en <strong>1949</strong>, la E.E.S.T. N°1 "Nuestra Señora del Valle" es una institución pública 
+        de gestión estatal con más de 75 años formando técnicos en Muñiz, Buenos Aires. 
+        Su primer director fue el ingeniero <strong>José Cosentino</strong>, y comenzó con 196 alumnos en seis divisiones.
+        En 1964 adoptó oficialmente su nombre actual por resolución N° 1164-c/64.
+      </p>
+      <section class="carousel">
+        <div class="carousel-container">
+          <img src="imagenes/1.jpg" class="active">
+          <img src="imagenes/2.jpg">
+          <img src="imagenes/3.jpg">
+          <img src="imagenes/4.jpg">
+          <img src="imagenes/5.jpg">
+          <img src="imagenes/6.jpg">
+        </div>
+        <div class="carousel-dots" id="carouselDots"></div>
+      </section>
+    </div>
+  </section>
+
+  <!-- QUÉ HACEMOS -->
+  <section class="que-hacemos reveal">
+    <div class="container">
+      <h2>¿Qué hacemos?</h2>
+      <div class="features">
+        <div class="feature reveal">
+          <div class="feature-icon">🛠️</div>
+          <h4>Proyectos reales</h4>
+          <p>Aplicamos los conocimientos en trabajos prácticos concretos desde el primer año.</p>
+        </div>
+        <div class="feature reveal">
+          <div class="feature-icon">🏫</div>
+          <h4>Talleres equipados</h4>
+          <p>Espacios con herramientas y maquinaria real para aprender haciendo.</p>
+        </div>
+        <div class="feature reveal">
+          <div class="feature-icon">⚙️</div>
+          <h4>Formación técnica</h4>
+          <p>Experiencias que preparan directamente para el mundo laboral y universitario.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ESPECIALIDADES -->
+  <section class="especialidades reveal">
+    <div class="container">
+      <h2>Especialidades</h2>
+      <div class="cards">
+        <a href="informatica.html" class="card reveal">
+          <div class="icon">💻</div>
+          <h3>Informática</h3>
+          <p>Programación, sistemas, redes y tecnología de la información.</p>
+          <span class="ver-mas">Ver más →</span>
+        </a>
+        <a href="electromecanica.html" class="card reveal">
+          <div class="icon">⚙️</div>
+          <h3>Electromecánica</h3>
+          <p>Circuitos eléctricos, automatización industrial y control de sistemas.</p>
+          <span class="ver-mas">Ver más →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- UBICACIÓN -->
+  <section class="ubicacion reveal" id="contacto">
+    <div class="container">
+      <h2>📍 Ubicación y Contacto</h2>
+      <div class="ubicacion-contenido">
+        <div class="mapa">
+          <iframe
+            src="https://www.google.com/maps?q=Farias+480+Muñiz+San+Miguel+Buenos+Aires&output=embed"
+            width="100%" height="320" style="border:0; border-radius:12px;"
+            allowfullscreen="" loading="lazy">
+          </iframe>
+        </div>
+        <div class="info">
+          <div class="info-item">📍 <span><strong>Dirección:</strong> Farías 480, Muñiz</span></div>
+          <div class="info-item">🏙️ <span><strong>Partido:</strong> San Miguel, Buenos Aires</span></div>
+          <div class="info-item">📞 <span><strong>Teléfono:</strong> (011) 4664-0516</span></div>
+          <div class="info-item">🏛️ <span><strong>Tipo:</strong> Gestión pública estatal</span></div>
+          <div class="info-item">📅 <span><strong>Fundación:</strong> 1949</span></div>
+          <div class="info-item">🌐 <span><strong>Dependencia:</strong> DGCyE — Prov. Bs. As.</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h4>🏫 E.E.S.T. N°1 Muñiz</h4>
+                <p>Escuela de Educación Secundaria Técnica N°1 "Nuestra Señora del Valle".<br>
+                Institución pública estatal con más de 75 años formando técnicos en el partido de San Miguel.</p>
+            </div>
+            <div class="footer-section">
+                <h4>🔗 Navegación</h4>
+                <ul>
+                    <li><a href="index.html">🏠 Inicio</a></li>
+                    <li><a href="temario.html">📋 Temario</a></li>
+                    <li><a href="normativa.html">📜 Normativa</a></li>
+                    <li><a href="informatica.html">💻 Informática</a></li>
+                    <li><a href="electromecanica.html">⚙️ Electromecánica</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>📞 Contacto</h4>
+                <ul>
+                    <li>📍 Farías 480, Muñiz</li>
+                    <li>🏙️ San Miguel, Bs. As.</li>
+                    <li>📞 (011) 4664-0516</li>
+                    <li>📅 Fundada en 1949</li>
+                </ul>
+                <div class="footer-social">
+                    <a href="https://www.instagram.com/alejogarcia.dev?igsh=bzl0ZGlhd2E3MXJl" target="_blank" class="social-btn instagram">
+                        <span>📸</span> Instagram del dev
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 E.E.S.T. N°1 Muñiz — Portal Institucional |
+            Desarrollado por
+            <a href="https://github.com/alejogarciaDev" target="_blank" class="dev-name">Alejo García</a>
+            <a href="https://www.instagram.com/alejogarcia.dev?igsh=bzl0ZGlhd2E3MXJl" target="_blank" class="dev-ig" title="Instagram">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle; margin-left:6px;">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+              </svg>
+            </a>
+            </p>
+        </div>
+    </footer>
+    <script>
+    /* ---- Carrusel con dots ---- */
+    let index = 0;
+    const images = document.querySelectorAll(".carousel img");
+    const dotsContainer = document.getElementById('carouselDots');
+
+    // Crear dots
+    images.forEach((_, i) => {
+      const dot = document.createElement('div');
+      dot.className = 'dot' + (i === 0 ? ' active' : '');
+      dot.addEventListener('click', () => goTo(i));
+      dotsContainer.appendChild(dot);
+    });
+
+    function goTo(n) {
+      images[index].classList.remove("active");
+      dotsContainer.children[index].classList.remove("active");
+      index = n;
+      images[index].classList.add("active");
+      dotsContainer.children[index].classList.add("active");
+    }
+
+    setInterval(() => goTo((index + 1) % images.length), 3500);
+</script>
+
+<script>
+/* ==================== PARTICLE NETWORK ==================== */
+(function() {
+  const canvas = document.getElementById('starfieldCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const hero = document.getElementById('heroSection');
+
+  function resize() {
+    canvas.width  = hero.offsetWidth;
+    canvas.height = hero.offsetHeight;
+    initParticles();
+  }
+
+  // --- Colores acorde al colegio: rojo oscuro + blanco ---
+  const COLORS = {
+    bg1:      '#0d0000',  // fondo centro
+    bg2:      '#1a0000',  // fondo medio
+    bg3:      '#0a0000',  // fondo borde
+    dot:      'rgba(220, 60, 60, 0.85)',   // partícula roja
+    dotWhite: 'rgba(255, 220, 220, 0.6)', // partícula blanca
+    lineRed:  'rgba(200, 40, 40, ',       // línea roja (se le agrega alpha)
+    lineWht:  'rgba(255, 200, 200, ',     // línea blanca
+  };
+
+  const PARTICLE_COUNT = 80;
+  const MAX_DIST = 160;    // distancia máxima para conectar
+  const SPEED = 0.4;
+
+  let particles = [];
+
+  function initParticles() {
+    particles = [];
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      particles.push({
+        x:  Math.random() * canvas.width,
+        y:  Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * SPEED,
+        vy: (Math.random() - 0.5) * SPEED,
+        r:  Math.random() * 2.5 + 1,
+        type: Math.random() > 0.6 ? 'white' : 'red'  // 40% blancas, 60% rojas
+      });
+    }
+  }
+
+  function draw() {
+    // Fondo: degradado radial rojo oscuro → negro
+    const grad = ctx.createRadialGradient(
+      canvas.width * 0.5, canvas.height * 0.4, 0,
+      canvas.width * 0.5, canvas.height * 0.4, canvas.width * 0.75
+    );
+    grad.addColorStop(0,   '#1c0000');
+    grad.addColorStop(0.4, '#120000');
+    grad.addColorStop(0.7, '#0a0000');
+    grad.addColorStop(1,   '#050000');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Mover partículas y rebotar en bordes
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0 || p.x > canvas.width)  p.vx *= -1;
+      if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+    });
+
+    // Dibujar conexiones
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const a = particles[i];
+        const b = particles[j];
+        const dx = a.x - b.x;
+        const dy = a.y - b.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < MAX_DIST) {
+          const alpha = (1 - dist / MAX_DIST) * 0.55;
+          // Si ambas son del mismo tipo → mismo color, si mezclan → blancuzco
+          const lineColor = (a.type === 'red' && b.type === 'red')
+            ? COLORS.lineRed + alpha + ')'
+            : COLORS.lineWht + (alpha * 0.7) + ')';
+
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.strokeStyle = lineColor;
+          ctx.lineWidth = 0.8;
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Dibujar nodos
+    particles.forEach(p => {
+      // Glow exterior
+      const glowColor = p.type === 'red'
+        ? 'rgba(200, 30, 30, 0.15)'
+        : 'rgba(255, 200, 200, 0.1)';
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r * 4, 0, Math.PI * 2);
+      ctx.fillStyle = glowColor;
+      ctx.fill();
+
+      // Punto principal
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.type === 'red' ? COLORS.dot : COLORS.dotWhite;
+      ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+  draw();
+})();
+
+/* ==================== 3D SHIELD PARALLAX ==================== */
+(function() {
+  const wrapper = document.getElementById('shield3d');
+  if (!wrapper) return;
+
+  const inner = wrapper.querySelector('.shield-3d-inner');
+  const shadow = wrapper.querySelector('.shield-shadow');
+  const hero = document.getElementById('heroSection');
+
+  let currentRotateX = 0;
+  let currentRotateY = 0;
+  let targetRotateX = 0;
+  let targetRotateY = 0;
+  let floatTime = 0;
+
+  // Mouse parallax
+  hero.addEventListener('mousemove', (e) => {
+    const rect = hero.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    targetRotateY = x * 20;
+    targetRotateX = -y * 15;
+  });
+
+  hero.addEventListener('mouseleave', () => {
+    targetRotateX = 0;
+    targetRotateY = 0;
+  });
+
+  function animate() {
+    requestAnimationFrame(animate);
+    floatTime += 0.015;
+
+    // Smooth interpolation
+    currentRotateX += (targetRotateX - currentRotateX) * 0.06;
+    currentRotateY += (targetRotateY - currentRotateY) * 0.06;
+
+    // Gentle float
+    const floatY = Math.sin(floatTime) * 8;
+    const floatRotate = Math.sin(floatTime * 0.7) * 1.5;
+
+    inner.style.transform = `
+      perspective(1000px)
+      rotateX(${currentRotateX + floatRotate}deg)
+      rotateY(${currentRotateY}deg)
+      translateY(${floatY}px)
+    `;
+
+    // Dynamic shadow
+    const shadowOffsetX = -currentRotateY * 1.5;
+    const shadowOffsetY = currentRotateX * 1.5 + 20 + floatY;
+    const shadowBlur = 40 + Math.abs(currentRotateX) + Math.abs(currentRotateY);
+    const shadowScale = 0.85 - (floatY / 100);
+    shadow.style.transform = `translateX(${shadowOffsetX}px) translateY(${shadowOffsetY}px) scaleX(${shadowScale}) scaleY(0.3)`;
+    shadow.style.opacity = 0.4 - (floatY / 80);
+    shadow.style.filter = `blur(${shadowBlur}px)`;
+  }
+  animate();
+})();
+</script>
+
+<script>
+/* ---- Scroll Reveal ---- */
+const revealEls = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), i * 80);
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12 });
+revealEls.forEach(el => revealObserver.observe(el));
+
+/* ---- Contador animado de stats ---- */
+const statNumbers = document.querySelectorAll('.stat-number');
+const statsObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      const target = parseInt(el.getAttribute('data-target'));
+      const duration = 1800;
+      const step = Math.ceil(target / (duration / 16));
+      let current = 0;
+      const timer = setInterval(() => {
+        current = Math.min(current + step, target);
+        el.textContent = current.toLocaleString('es-AR');
+        if (current >= target) clearInterval(timer);
+      }, 16);
+      statsObserver.unobserve(el);
+    }
+  });
+}, { threshold: 0.5 });
+statNumbers.forEach(el => statsObserver.observe(el));
+</script>
+</body>
+</html>

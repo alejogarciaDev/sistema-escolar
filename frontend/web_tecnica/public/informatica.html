@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Portal Institucional</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="shortcut icon" href="imagenes/imagen.ico" type="image/x-icon">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <header class="main-header">
+    <!-- Espacio para imagen futura -->
+    <div class="logo-space" >
+        <img src="media/logo.png" alt="logo" class="logo-img">
+    </div>
+
+    <!-- Título centrado -->
+    <div class="title-header">Escuela Técnica N°1 Nuestra Señora del Valle</div>
+
+    <!-- Botón hamburguesa -->
+    <button class="hamburger-btn" id="hamburgerBtn">☰</button>
+
+    <!-- Menú overlay -->
+    <div id="fullscreenMenu" class="fullscreen-menu-header">
+        <a href="index.html">Inicio</a>
+        <a href="temario.html">Termario</a>
+        <a href="sistema/login.html ">sesion</a>
+        <a href="contacto.html">contacto</a>
+        <a href="#">Cerrar</a>
+    </div>
+    <script>
+    const hamburgerBtn = document.getElementById("hamburgerBtn");
+    const fullscreenMenu = document.getElementById("fullscreenMenu");
+
+    hamburgerBtn.addEventListener("click", () => {
+        fullscreenMenu.classList.toggle("show");
+    });
+
+    // Cerrar menú al tocar cualquier enlace
+    fullscreenMenu.querySelectorAll("a").forEach(link => {
+        link.addEventListener("click", () => {
+            fullscreenMenu.classList.remove("show");
+        });
+    });
+
+    // Cerrar menú si clic fuera de los enlaces
+    fullscreenMenu.addEventListener("click", (e) => {
+        if(e.target === fullscreenMenu){
+            fullscreenMenu.classList.remove("show");
+        }
+    });
+   </script>
+   </header>
+ 
+<main class="main">
+
+     <!-- HERO -->
+    <section class="hero hero-modern" id="hero-informatica">
+        <div class="hero-bg" style="background-image:url('media/hero-informatica.png');"></div>
+        <div class="hero-content">
+            <h1>Área de Informática</h1>
+            <p class="subtitle">Formación técnica para el mundo digital</p>
+            <p class="desc">Preparamos a nuestros estudiantes para enfrentar los desafíos tecnológicos actuales, desarrollando habilidades en programación, redes y sistemas.</p>
+            <a href="#intro" class="hero-cta">Conoce más</a>
+        </div>
+    </section>
+
+    <!-- INTRO -->
+    <section id="intro" class="info container">
+        <h2>¿Por qué estudiar informática?</h2>
+        <p style="font-size: 1.15rem; line-height: 1.8; text-align: center; max-width: 850px; margin: 0 auto 20px; color: #444;">
+            La informática impulsa el mañana. En la Escuela Técnica N°1 ofrecemos una formación de vanguardia que transforma el interés en habilidad profesional. A través de la lógica y la práctica constante, aprenderás a idear y construir soluciones de software, configurar infraestructuras de comunicación y liderar proyectos de base tecnológica.
+        </p>
+        <p style="font-size: 1.1rem; line-height: 1.8; text-align: center; max-width: 850px; margin: 0 auto; color: #666; font-weight: 300;">
+            El egresado técnico no solo domina las herramientas digitales de hoy, sino que desarrolla el pensamiento crítico y la capacidad de adaptación necesarios para liderar las innovaciones del futuro, abriendo puertas a un mercado laboral dinámico y con alta demanda de talento especializado.
+        </p>
+    </section>
+
+    <!-- ESPECIALIDADES -->
+    <section class="destacado">
+    <div class="container">
+        <h2>Formación técnica</h2>
+
+        <div class="cards">
+
+            <a href="#software" class="card">
+                <div class="icon">💻</div>
+                <h3>Desarrollo de Software</h3>
+                <p>Programación y aplicaciones web.</p>
+            </a>
+
+            <a href="#redes" class="card">
+                <div class="icon">🌐</div>
+                <h3>Redes</h3>
+                <p>Conectividad y seguridad.</p>
+            </a>
+
+            <a href="#sistemas" class="card">
+                <div class="icon">🖥️</div>
+                <h3>Sistemas</h3>
+                <p>Servidores y Linux.</p>
+            </a>
+
+            <a href="#bd" class="card">
+                <div class="icon">🗄️</div>
+                <h3>Bases de Datos</h3>
+                <p>Gestión de información.</p>
+            </a>
+            <a href="#bd" class="card">
+                <div class="icon">🗄️</div>
+                <h3>robotica</h3>
+                <p>Gestión de información.</p>
+            </a>
+
+        </div>
+    </div>
+</section>
+
+    <!-- PROYECTOS -->
+    <section class="robotica">
+        <div class="container">
+            <h2>Aprendizaje basado en proyectos</h2>
+
+            <p class="robot-desc">
+                Nuestros estudiantes aplican los conocimientos adquiridos desarrollando sistemas reales,
+                como aplicaciones web, gestores de stock y soluciones tecnológicas para la institución.
+            </p>
+
+            <div class="cards cards-horizontal">
+
+                <div class="card">
+                    <h3>📦 Sistema de Pañol</h3>
+                    <p>Gestión de herramientas, préstamos y control de stock en tiempo real.</p>
+                </div>
+
+                <div class="card">
+                    <h3>🌍 Aplicaciones Web</h3>
+                    <p>Desarrollo de sitios y sistemas conectados a bases de datos.</p>
+                </div>
+
+                <div class="card">
+                    <h3>⚙️ Automatización</h3>
+                    <p>Soluciones para optimizar procesos mediante tecnología.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+  
+
+   
+    <section id="software" class="detalle">
+    <div class="container detalle-flex">
+        <div class="detalle-texto">
+            <h2>Desarrollo de Software</h2>
+            <p>
+                En esta área los estudiantes aprenden a programar utilizando lenguajes como Python y JavaScript.
+                Se desarrollan aplicaciones reales, páginas web dinámicas y sistemas conectados a bases de datos.
+            </p>
+            <p>
+                Se trabaja con lógica, algoritmos y buenas prácticas de desarrollo.
+            </p>
+        </div>
+        <img src="imagenes/programacion.jpg" alt="programación">
+    </div>
+</section>
+
+<section id="redes" class="detalle">
+    <div class="container detalle-flex">
+        <img src="imagenes/redes.jpg" alt="redes">
+        <div class="detalle-texto">
+            <h2>Redes</h2>
+            <p>
+                Se estudia cómo se conectan los dispositivos, configuración de routers,
+                direccionamiento IP y protocolos de red.
+            </p>
+            <p>
+                Fundamental para entender Internet y la comunicación digital.
+            </p>
+        </div>
+    </div>
+</section>
+
+<section id="sistemas" class="detalle">
+    <div class="container detalle-flex">
+        <div class="detalle-texto">
+            <h2>Sistemas</h2>
+            <p>
+                Administración de sistemas operativos como Linux, manejo de servidores
+                y despliegue de aplicaciones.
+            </p>
+            <p>
+                Se aprende a trabajar en entornos reales de infraestructura.
+            </p>
+        </div>
+        <img src="imagenes/linux.jpg" alt="linux">
+    </div>
+</section>
+
+<section id="bd" class="detalle">
+    <div class="container detalle-flex">
+        <img src="imagenes/base_de_datos.jpeg" alt="base de datos">
+        <div class="detalle-texto">
+            <h2>Bases de Datos</h2>
+            <p>
+                Diseño, creación y gestión de bases de datos con SQL.
+            </p>
+            <p>
+                Permite almacenar, organizar y consultar grandes volúmenes de información.
+            </p>
+        </div>
+    </div>
+</section>
+
+<section id="sistemas" class="detalle">
+    <div class="container detalle-flex">
+        <div class="detalle-texto">
+            <h2>robotica</h2>
+            <p>
+                Administración de sistemas operativos como Linux, manejo de servidores
+                y despliegue de aplicaciones.
+            </p>
+            <p>
+                Se aprende a trabajar en entornos reales de infraestructura.
+            </p>
+        </div>
+        <img src="imagenes/robotica.jpg" alt="linux">
+    </div>
+</section>
+<section id="bd" class="detalle">
+    <div class="container detalle-flex">
+        <img src="imagenes/impresion 3d.jpg" alt="base de datos">
+        <div class="detalle-texto">
+            <h2>impresión 3D</h2>
+            <p>
+                Diseño, creación de piezas impresas en 3D.
+            </p>
+            <p>
+                Permite almacenar, organizar y consultar grandes volúmenes de información.
+            </p>
+        </div>
+    </div>
+</section>
+  <!-- SALIDA LABORAL -->
+  <section class="info container">
+    <h2>Salida laboral y Futuro Profesional</h2>
+    <p style="text-align: center; max-width: 700px; margin: 0 auto 30px; font-size: 1.1rem; color: #555; line-height: 1.7;">
+      Los egresados de la especialidad de Informática cuentan con las habilidades y certificaciones técnicas necesarias para integrarse de forma inmediata en el sector tecnológico o emprender iniciativas digitales propias.
+    </p>
+
+    <div class="salida-laboral-grid">
+      <div class="salida-card">
+        <span class="salida-icon">💻</span>
+        <h3>Desarrollo de Software</h3>
+        <p>Programación de aplicaciones web, móviles y de escritorio utilizando lenguajes y frameworks modernos.</p>
+      </div>
+      <div class="salida-card">
+        <span class="salida-icon">🌐</span>
+        <h3>Soporte e Infraestructura</h3>
+        <p>Configuración, mantenimiento y seguridad de redes informáticas, servidores y sistemas operativos.</p>
+      </div>
+      <div class="salida-card">
+        <span class="salida-icon">📊</span>
+        <h3>Bases de Datos</h3>
+        <p>Administración y estructuración de datos en sistemas SQL, garantizando el acceso rápido y seguro a la información.</p>
+      </div>
+      <div class="salida-card">
+        <span class="salida-icon">🎓</span>
+        <h3>Estudios Superiores</h3>
+        <p>Base excelente para cursar Ingeniería en Sistemas, Licenciatura en Informática o tecnicaturas avanzadas.</p>
+      </div>
+    </div>
+  </section>
+    
+
+
+</main>
+
+    <footer class="footer">
+    <div class="footer-container">
+        <div class="footer-section">
+            <h4>🏫 E.E.S.T. N°1 Muñiz</h4>
+            <p>Escuela de Educación Secundaria Técnica N°1 "Nuestra Señora del Valle".<br>Institución pública estatal con más de 75 años formando técnicos.</p>
+        </div>
+        <div class="footer-section">
+            <h4>🔗 Navegación</h4>
+            <ul>
+                <li><a href="index.html">🏠 Inicio</a></li>
+                <li><a href="temario.html">📋 Temario</a></li>
+                <li><a href="normativa.html">📜 Normativa</a></li>
+                <li><a href="informatica.html">💻 Informática</a></li>
+                <li><a href="electromecanica.html">⚙️ Electromecánica</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h4>📞 Contacto</h4>
+            <ul>
+                <li>📍 Farías 480, Muñiz</li>
+                <li>🏙️ San Miguel, Bs. As.</li>
+                <li>📞 (011) 4664-0516</li>
+                <li>📅 Fundada en 1949</li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2026 E.E.S.T. N°1 Muñiz — Portal Institucional |
+            Desarrollado por <a href="https://github.com/alejogarciaDev" target="_blank" class="dev-name">Alejo García</a>
+        </p>
+    </div>
+</footer>
+    <script>
+  let index = 0;
+  const images = document.querySelectorAll(".carousel img");
+
+  setInterval(() => {
+    images[index].classList.remove("active");
+    index = (index + 1) % images.length;
+    images[index].classList.add("active");
+  }, 3000);
+</script>
+</body>
+</html>
