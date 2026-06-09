@@ -72,7 +72,18 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       final token = data['access_token'] as String;
-      final user = User.fromLogin(data, token);
+      var user = User.fromLogin(data, token);
+
+      // Obtener dashboards disponibles
+      try {
+        final dashApi = ApiService(token);
+        final dashboards = await dashApi.getMisDashboards();
+        final mapped = dashboards.map((d) => Map<String, dynamic>.from(d)).toList();
+        user = user.copyWith(dashboards: mapped);
+      } catch (_) {
+        // Si falla, usar dashboards por defecto según rol
+      }
+
       await AuthService.saveSession(user);
 
       if (!mounted) return;

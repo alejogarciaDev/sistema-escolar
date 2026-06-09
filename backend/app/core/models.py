@@ -16,3 +16,6 @@ from app.modules.academico.archivos.models import Archivo
 
 # CAMPUS VIRTUAL
 from app.modules.campus.models import Tarea, Entrega, Calificacion, MaterialEstudio, DocumentoAlumno, DocumentoCompartido, CompartidoPermiso
+
+# NOTIFICACIONES
+from app.modules.notifications.models import Notification

@@ -4,6 +4,7 @@ from .models import Order
 from .items.models import OrderItem
 from app.modules.panol.loans.service import create_loan
 from app.modules.panol.categories.models import Category
+from app.modules.notifications.models import Notification
 
 def create_order(db: Session, user_id: int, items):
     order = Order(user_id=user_id, status="pendiente")
@@ -35,8 +36,17 @@ def prepare_order(db: Session, order_id: int):
         raise HTTPException(status_code=404, detail="Pedido no encontrado")
     if order.status != "pendiente":
         raise HTTPException(status_code=400, detail="Solo pedidos pendientes pueden prepararse")
-    
+
     order.status = "preparado"
+
+    notif = Notification(
+        user_id=order.user_id,
+        title="Pedido listo",
+        message=f"Tu pedido #{order.id} está listo para retirar en el Pañol",
+        type="order_ready"
+    )
+    db.add(notif)
+
     db.commit()
     return order
 

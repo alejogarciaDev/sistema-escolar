@@ -91,6 +91,48 @@ class _PanolDashboardState extends State<PanolDashboard> with SingleTickerProvid
     ));
   }
 
+  Future<void> _prepararPedido(int orderId) async {
+    try {
+      await _api.prepareOrder(orderId);
+      await _loadData();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Pedido marcado como preparado')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+    }
+  }
+
+  void _mostrarDialogEntrega(int orderId) {
+    final descCtrl = TextEditingController();
+    showDialog(context: context, builder: (ctx) => AlertDialog(
+      title: const Text('Entregar Pedido'),
+      content: TextField(
+        controller: descCtrl,
+        decoration: const InputDecoration(labelText: 'Notas de entrega'),
+        maxLines: 3,
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancelar')),
+        ElevatedButton(
+          onPressed: () async {
+            Navigator.pop(ctx);
+            try {
+              await _api.deliverOrder(orderId, description: descCtrl.text.isEmpty ? null : descCtrl.text);
+              await _loadData();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Pedido entregado correctamente')),
+              );
+            } catch (e) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+            }
+          },
+          child: const Text('Entregar'),
+        ),
+      ],
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_loading) return const Center(child: CircularProgressIndicator());
@@ -192,12 +234,56 @@ class _PanolDashboardState extends State<PanolDashboard> with SingleTickerProvid
                     itemBuilder: (_, i) {
                       final p = _pedidos[i];
                       final items = p['items'] as List<dynamic>? ?? [];
+                      final status = p['status'] ?? 'pendiente';
+                      final statusColor = status == 'entregado' ? Colors.grey
+                          : status == 'preparado' ? Colors.blue : Colors.orange;
                       return Card(
                         margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        child: ListTile(
-                          leading: const Icon(Icons.receipt_long, color: Colors.orange),
-                          title: Text('Pedido #${p['id']}', style: const TextStyle(fontWeight: FontWeight.w600)),
-                          subtitle: Text('Profesor: ${p['profesor'] ?? p['user_id'] ?? '?'}  |  Estado: ${p['status'] ?? 'pendiente'}  |  Items: ${items.length}'),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(Icons.receipt_long, color: statusColor, size: 28),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text('Pedido #${p['id']} - ${p['profesor'] ?? 'Prof. #${p['user_id']}'}',
+                                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Text('Estado: ${status[0].toUpperCase()}${status.substring(1)}',
+                                style: TextStyle(color: statusColor, fontWeight: FontWeight.w500)),
+                              ...items.map((item) => Text(
+                                '  • ${item['category_name'] ?? 'Cat. #${item['category_id']}'} x${item['quantity']}',
+                                style: const TextStyle(fontSize: 12, color: Colors.grey),
+                              )),
+                              const SizedBox(height: 8),
+                              if (status == 'pendiente')
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton.icon(
+                                    icon: const Icon(Icons.check, size: 18),
+                                    label: const Text('Preparar'),
+                                    style: ElevatedButton.styleFrom(backgroundColor: Colors.orange, foregroundColor: Colors.white),
+                                    onPressed: () => _prepararPedido(p['id']),
+                                  ),
+                                ),
+                              if (status == 'preparado')
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton.icon(
+                                    icon: const Icon(Icons.handshake, size: 18),
+                                    label: const Text('Entregar'),
+                                    style: ElevatedButton.styleFrom(backgroundColor: Colors.blue, foregroundColor: Colors.white),
+                                    onPressed: () => _mostrarDialogEntrega(p['id']),
+                                  ),
+                                ),
+                            ],
+                          ),
                         ),
                       );
                     },

@@ -210,6 +210,28 @@ class ApiService {
     return jsonDecode(res.body);
   }
 
+  Future<List<dynamic>> getMyPedidos() async {
+    final res = await http.get(Uri.parse('$_baseUrl/orders/my'), headers: _headers);
+    if (res.statusCode != 200) throw Exception('Error al obtener mis pedidos');
+    return jsonDecode(res.body);
+  }
+
+  Future<Map<String, dynamic>> prepareOrder(int orderId) async {
+    final res = await http.put(Uri.parse('$_baseUrl/orders/$orderId/prepare'), headers: _headers);
+    if (res.statusCode != 200) throw Exception('Error al preparar pedido');
+    return jsonDecode(res.body);
+  }
+
+  Future<Map<String, dynamic>> deliverOrder(int orderId, {String? description}) async {
+    final res = await http.put(
+      Uri.parse('$_baseUrl/orders/$orderId/deliver'),
+      headers: _headers,
+      body: jsonEncode({'description_loan': description}),
+    );
+    if (res.statusCode != 200) throw Exception('Error al entregar pedido');
+    return jsonDecode(res.body);
+  }
+
   Future<List<dynamic>> getPrestamos() async {
     final res = await http.get(Uri.parse('$_baseUrl/loans/active'), headers: _headers);
     if (res.statusCode != 200) throw Exception('Error al obtener prestamos');
@@ -232,5 +254,31 @@ class ApiService {
     final res = await http.get(Uri.parse('$_baseUrl/alumnos/?skip=$skip&limit=$limit'), headers: _headers);
     if (res.statusCode != 200) throw Exception('Error al obtener alumnos');
     return jsonDecode(res.body);
+  }
+
+  Future<List<dynamic>> getMisDashboards() async {
+    final res = await http.get(Uri.parse('$_baseUrl/auth/mis-dashboards'), headers: _headers);
+    if (res.statusCode != 200) throw Exception('Error al obtener dashboards');
+    return jsonDecode(res.body);
+  }
+
+  Future<List<dynamic>> getNotifications() async {
+    final res = await http.get(Uri.parse('$_baseUrl/notifications/'), headers: _headers);
+    if (res.statusCode != 200) throw Exception('Error al obtener notificaciones');
+    return jsonDecode(res.body);
+  }
+
+  Future<int> getUnreadNotificationCount() async {
+    final res = await http.get(Uri.parse('$_baseUrl/notifications/unread-count'), headers: _headers);
+    if (res.statusCode != 200) return 0;
+    return jsonDecode(res.body)['count'] ?? 0;
+  }
+
+  Future<void> markNotificationRead(int id) async {
+    await http.put(Uri.parse('$_baseUrl/notifications/$id/read'), headers: _authHeader);
+  }
+
+  Future<void> markAllNotificationsRead() async {
+    await http.put(Uri.parse('$_baseUrl/notifications/read-all'), headers: _authHeader);
   }
 }

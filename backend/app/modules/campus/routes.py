@@ -13,7 +13,7 @@ from app.modules.academico.archivos.models import Archivo
 from app.modules.academico.alumnos.service import obtener_por_dni
 from app.modules.users.users.models import User
 
-router = APIRouter(prefix="/campus", tags=["Campus Virtual"])
+router = APIRouter(tags=["Campus Virtual"])
 
 
 # ================= TAREAS =================

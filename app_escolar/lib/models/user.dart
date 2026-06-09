@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class User {
   final int id;
   final String name;
@@ -5,6 +7,7 @@ class User {
   final int roleId;
   final String roleName;
   final String token;
+  final List<Map<String, dynamic>> dashboards;
 
   User({
     required this.id,
@@ -13,6 +16,7 @@ class User {
     required this.roleId,
     required this.roleName,
     required this.token,
+    this.dashboards = const [],
   });
 
   factory User.fromLogin(Map<String, dynamic> json, String token) {
@@ -24,6 +28,18 @@ class User {
       roleId: user['role'] ?? user['role_id'] ?? json['role'] ?? json['role_id'] ?? 0,
       roleName: user['role_name'] ?? json['role_name'] ?? '',
       token: token,
+    );
+  }
+
+  User copyWith({List<Map<String, dynamic>>? dashboards}) {
+    return User(
+      id: id,
+      name: name,
+      email: email,
+      roleId: roleId,
+      roleName: roleName,
+      token: token,
+      dashboards: dashboards ?? this.dashboards,
     );
   }
 

@@ -13,6 +13,7 @@ from app.modules.users.users.routes import router as users_router
 from app.modules.users.roles.routes import router as roles_router
 from app.modules.users.permissions.routes import router as permissions_router
 from app.modules.auth.routes import router as auth_router
+from app.modules.notifications.routes import router as notifications_router
 
 Base.metadata.create_all(bind=engine)
 
@@ -34,3 +35,4 @@ app.include_router(users_router)
 app.include_router(roles_router)
 app.include_router(permissions_router)
 app.include_router(auth_router)
+app.include_router(notifications_router)
