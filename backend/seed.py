@@ -72,6 +72,11 @@ try:
     for name in profesor_perms:
         roles["profesor"].permissions.append(perm_objects[name])
 
+    # Pañol → users.list (para cargar profesores en pedido directo)
+    panol_perms = ["users.list"]
+    for name in panol_perms:
+        roles["panol"].permissions.append(perm_objects[name])
+
     # Oficina Alumnos → alumnos + users.list
     oficina_perms = ["alumnos.create", "alumnos.list", "users.list"]
     for name in oficina_perms:

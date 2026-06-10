@@ -187,21 +187,42 @@ function getAuthHeaders() {
 }
 
 async function apiGet(url) {
-    const res = await fetch(url, { method: "GET", headers: getAuthHeaders() });
-    if (!res.ok) return null;
-    return await res.json();
+    try {
+        const res = await fetch(url, { method: "GET", headers: getAuthHeaders() });
+        if (!res.ok) {
+            console.warn("apiGet error:", url, res.status, res.statusText);
+            return null;
+        }
+        return await res.json();
+    } catch (e) {
+        console.error("apiGet network error:", url, e);
+        showToast("Error de conexión con el servidor", true);
+        return null;
+    }
 }
 
 async function apiPost(url, body) {
-    const res = await fetch(url, { method: "POST", headers: getAuthHeaders(), body: JSON.stringify(body) });
-    if (!res.ok) return null;
-    return await res.json();
+    try {
+        const res = await fetch(url, { method: "POST", headers: getAuthHeaders(), body: JSON.stringify(body) });
+        if (!res.ok) return null;
+        return await res.json();
+    } catch (e) {
+        console.error("apiPost network error:", url, e);
+        showToast("Error de conexión con el servidor", true);
+        return null;
+    }
 }
 
 async function apiPut(url, body) {
-    const res = await fetch(url, { method: "PUT", headers: getAuthHeaders(), body: JSON.stringify(body) });
-    if (!res.ok) return null;
-    return await res.json();
+    try {
+        const res = await fetch(url, { method: "PUT", headers: getAuthHeaders(), body: JSON.stringify(body) });
+        if (!res.ok) return null;
+        return await res.json();
+    } catch (e) {
+        console.error("apiPut network error:", url, e);
+        showToast("Error de conexión con el servidor", true);
+        return null;
+    }
 }
 
 function showToast(message, isError = false) {
@@ -266,8 +287,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
-    await cargarCategorias();
-    await cargarProfesores();
+    // Cargar datos, con try-catch para que un error no bloquee el resto
+    try { await cargarCategorias(); } catch (e) { console.error("Error cargando categorías:", e); }
+    try { await cargarProfesores(); } catch (e) { console.error("Error cargando profesores:", e); }
     cargarTodo();
     cargarSelectorDashboards();
     
@@ -330,8 +352,11 @@ function cargarTodo() {
 
 async function cargarProfesores() {
     const data = await apiGet(`${API_URL}/users/`);
-    if (!data) return;
     const manualProfesor = document.getElementById("manualProfesor");
+    if (!data) {
+        if (manualProfesor) manualProfesor.innerHTML = '<option value="">Error al cargar profesores</option>';
+        return;
+    }
     if (manualProfesor) manualProfesor.innerHTML = '<option value="">Seleccionar Profesor</option>';
     data.forEach(u => {
         if (manualProfesor) manualProfesor.innerHTML += `<option value="${u.id}">${u.name}</option>`;
@@ -372,9 +397,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function cargarCategorias(){
     const data = await apiGet(`${API_URL}/categories/`);
-    if (!data) return;
     const select = document.getElementById("toolCategory");
     const manualCategory = document.getElementById("manualCategory");
+    if (!data) {
+        const msg = '<option value="">Error al cargar categorías</option>';
+        if (select) select.innerHTML = msg;
+        if (manualCategory) manualCategory.innerHTML = msg;
+        return;
+    }
     if (select) select.innerHTML = '<option value="">Seleccionar categoría</option>';
     if (manualCategory) manualCategory.innerHTML = '<option value="">Seleccionar categoría</option>';
     categoriesMap = {};
