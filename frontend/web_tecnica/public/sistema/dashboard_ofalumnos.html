@@ -442,13 +442,38 @@
     }
 
     function descargarArchivo(id) {
-        window.open(`${API_URL}/archivos/descargar/${id}`, "_blank");
+        const url = `${API_URL}/archivos/descargar/${id}`;
+        const win = window.open(url, "_blank");
+        if (!win) {
+            const a = document.createElement("a");
+            a.href = url;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
     }
 
-    function imprimirArchivo(id) {
-        const url = `${API_URL}/archivos/ver/${id}`;
-        const win = window.open(url, "_blank");
-        win.onload = () => win.print();
+    async function imprimirArchivo(id) {
+        try {
+            const res = await fetch(`${API_URL}/archivos/ver/${id}`);
+            if (!res.ok) throw new Error("Error al cargar");
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+            const iframe = document.createElement("iframe");
+            iframe.style.position = "fixed";
+            iframe.style.top = "-9999px";
+            iframe.style.left = "-9999px";
+            document.body.appendChild(iframe);
+            iframe.onload = () => {
+                setTimeout(() => {
+                    try { iframe.contentWindow.print(); } catch (e) { window.open(url, "_blank"); }
+                    setTimeout(() => { document.body.removeChild(iframe); URL.revokeObjectURL(url); }, 2000);
+                }, 500);
+            };
+            iframe.src = url;
+        } catch (e) {
+            alert("No se pudo cargar el archivo para impresión");
+        }
     }
 
     // ---- TOGGLE SECTION ----
