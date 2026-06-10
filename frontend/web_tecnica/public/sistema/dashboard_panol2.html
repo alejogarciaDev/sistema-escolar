@@ -226,7 +226,7 @@ function showToast(message, isError = false) {
     }, 3000);
 }
 
-}
+
 
 // ================= SELECTOR DE DASHBOARDS =================
 const CURRENT_DASHBOARD = "panol";
@@ -332,12 +332,9 @@ async function cargarProfesores() {
     const data = await apiGet(`${API_URL}/users/`);
     if (!data) return;
     const manualProfesor = document.getElementById("manualProfesor");
-    const returnProfesor = document.getElementById("returnProfesor");
     if (manualProfesor) manualProfesor.innerHTML = '<option value="">Seleccionar Profesor</option>';
-    if (returnProfesor) returnProfesor.innerHTML = '<option value="">Seleccionar Profesor</option>';
     data.forEach(u => {
         if (manualProfesor) manualProfesor.innerHTML += `<option value="${u.id}">${u.name}</option>`;
-        if (returnProfesor) returnProfesor.innerHTML += `<option value="${u.id}">${u.name}</option>`;
     });
 }
 
@@ -370,39 +367,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    const returnForm = document.getElementById("returnForm");
-    if (returnForm) {
-        returnForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const user_id = parseInt(document.getElementById("returnProfesor").value);
-            const barcode = document.getElementById("returnCategoryBarcode").value.trim();
-            const quantity = parseInt(document.getElementById("returnQuantity").value);
-            const description_return = document.getElementById("returnDescription").value.trim();
 
-            if (!user_id || !barcode || quantity < 1) return alert("Complete todos los campos");
-
-            const res = await fetch(`${API_URL}/loans/return`, {
-                method: "POST",
-                headers: getAuthHeaders(),
-                body: JSON.stringify({ category_barcode: barcode, user_id: user_id, quantity: quantity, description_return })
-            });
-
-            if (!res.ok) {
-                const err = await res.json();
-                showToast(`Error al devolver: ${err.detail || "Verifica los datos"}`, true);
-            } else {
-                showToast(`✔ ${quantity} herramientas devueltas correctamente`);
-                document.getElementById("returnQuantity").value = "1";
-                document.getElementById("returnCategoryBarcode").value = "";
-                
-                const returnList = document.getElementById("returnList");
-                const time = new Date().toLocaleTimeString();
-                returnList.innerHTML = `<div style="padding: 5px; border-bottom: 1px solid #eee; color: #155724; background-color: #d4edda; border-radius: 3px; margin-top: 5px;">✅ [${time}] ${quantity} devueltas de categoría <b>${barcode}</b>.</div>` + returnList.innerHTML;
-
-                cargarTodo();
-            }
-        });
-    }
 });
 
 async function cargarCategorias(){
@@ -527,7 +492,7 @@ async function cambiarEstadoPedido(orderId, action) {
 
 // ================= ACTIVOS AGRUPADOS =================
 async function cargarPrestamosActivos() {
-    const data = await apiGet(${API_URL}/loans/active);
+    const data = await apiGet(`${API_URL}/loans/active`);
     const list = document.getElementById("activeLoansList");
     if (!list || !data) return;
 
@@ -544,35 +509,29 @@ async function cargarPrestamosActivos() {
         const qty = loan.quantity || 1;
         const loanId = loan.id;
 
-        list.innerHTML += "
-            <div style=\"margin-bottom: 10px;\">
-                <div class=\"panol-item\" style=\"display: flex; justify-content: space-between; align-items: center; padding: 12px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);\">
+        list.innerHTML += `
+            <div style="margin-bottom: 10px;">
+                <div class="panol-item" style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                     <div>
-                        <b></b> x
-                        <br><span style=\"font-size: 0.85rem; opacity: 0.7;\"></span>
+                        <b>${userName}</b> ${catName} x ${qty}
+                        <br><span style="font-size: 0.85rem; opacity: 0.7;">${loan.description_loan || ''}</span>
                     </div>
-                    <button onclick=\"devolverPrestamo()\" style=\"background-color: #17a2b8; color: white; border: none; padding: 8px 18px; border-radius: 4px; cursor: pointer; font-weight: bold;\">Devolver</button>
+                    <button onclick="devolverPrestamo(${loanId})" style="background-color: #17a2b8; color: white; border: none; padding: 8px 18px; border-radius: 4px; cursor: pointer; font-weight: bold;">Devolver</button>
                 </div>
             </div>
-        ";
+        `;
     });
 }
 
 async function devolverPrestamo(loanId) {
     const desc = prompt("Notas de devolución (opcional):");
     const body = desc && desc.trim() ? { description_return: desc.trim() } : {};
-    const res = await apiPut(${API_URL}/loans//return, body);
+    const res = await apiPut(`${API_URL}/loans/${loanId}/return`, body);
     if (!res) return showToast("Error al devolver préstamo", true);
     showToast("Préstamo devuelto correctamente");
     cargarTodo();
 }
 
-async function devolver(code){
-    const res = await apiPost(`${API_URL}/loans/return`, { barcode: code });
-    if (!res) return showToast("Error al devolver", true);
-    showToast(`Herramienta ${code} devuelta correctamente`);
-    cargarTodo();
-}
 
 // ================= HISTORIAL Y REGISTROS =================
 let historyData = [];
@@ -683,7 +642,5 @@ function descargarExcel() {
     document.body.removeChild(link);
 }
 </script>
-
-
 
 </html>

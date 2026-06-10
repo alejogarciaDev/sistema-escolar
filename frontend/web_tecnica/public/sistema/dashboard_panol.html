@@ -85,17 +85,8 @@
 </section>
 
 <section class="admin-section">
-    <h3>🔄 Devoluciones (Escanear Categoría)</h3>
-    <form id="returnForm" style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
-        <select id="returnProfesor" required style="flex: 1; padding: 8px;">
-            <option value="">Seleccionar Profesor que devuelve</option>
-        </select>
-        <input type="text" id="returnCategoryBarcode" placeholder="Escanear QR Categoría" required style="flex: 1; padding: 8px; border-radius: 3px; border: 1px solid #ccc;">
-        <input type="number" id="returnQuantity" placeholder="Cantidad" required min="1" value="1" style="width: 80px; padding: 8px;">
-        <input type="text" id="returnDescription" placeholder="Nota (opcional)" style="flex: 1; padding: 8px; border-radius: 3px; border: 1px solid #ccc;">
-        <button type="submit" style="background-color: #17a2b8; color: white; border: none; padding: 8px 15px; border-radius: 3px; cursor: pointer; font-weight: bold;">Devolver</button>
-    </form>
-    <div id="returnList" style="margin-top: 10px;"></div>
+    <h3>🔄 Devoluciones</h3>
+    <p style="color: #666;">Usá el botón <b>Devolver</b> en cada préstamo activo de la sección de arriba.</p>
 </section>
 
 <section class="admin-section">
@@ -341,38 +332,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    const returnForm = document.getElementById("returnForm");
-    if (returnForm) {
-        returnForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const user_id = parseInt(document.getElementById("returnProfesor").value);
-            const barcode = document.getElementById("returnCategoryBarcode").value.trim();
-            const quantity = parseInt(document.getElementById("returnQuantity").value);
-            const description_return = document.getElementById("returnDescription").value.trim();
-
-            if (!user_id || !barcode || quantity < 1) return alert("Complete todos los campos");
-
-            const res = await fetch(`${API_URL}/loans/return`, {
-                method: "POST",
-                headers: getAuthHeaders(),
-                body: JSON.stringify({ category_barcode: barcode, user_id: user_id, quantity: quantity, description_return })
-            });
-
-            if (!res.ok) {
-                const err = await res.json();
-                showToast(`Error al devolver: ${err.detail || "Verifica los datos"}`, true);
-            } else {
-                showToast(`✔ ${quantity} herramientas devueltas correctamente`);
-                document.getElementById("returnQuantity").value = "1";
-                document.getElementById("returnCategoryBarcode").value = "";
-                
-                const returnList = document.getElementById("returnList");
-                const time = new Date().toLocaleTimeString();
-                returnList.innerHTML = `<div style="padding: 5px; border-bottom: 1px solid #eee; color: #155724; background-color: #d4edda; border-radius: 3px; margin-top: 5px;">✅ [${time}] ${quantity} devueltas de categoría <b>${barcode}</b>.</div>` + returnList.innerHTML;
-
-                cargarTodo();
-            }
-        });
     }
 });
 
@@ -402,12 +361,9 @@ async function cargarProfesores() {
     const data = await apiGet(`${API_URL}/users/`);
     if (!data) return;
     const manualProfesor = document.getElementById("manualProfesor");
-    const returnProfesor = document.getElementById("returnProfesor");
     if (manualProfesor) manualProfesor.innerHTML = '<option value="">Seleccionar Profesor</option>';
-    if (returnProfesor) returnProfesor.innerHTML = '<option value="">Seleccionar Profesor</option>';
     data.forEach(u => {
         if (manualProfesor) manualProfesor.innerHTML += `<option value="${u.id}">${u.name}</option>`;
-        if (returnProfesor) returnProfesor.innerHTML += `<option value="${u.id}">${u.name}</option>`;
     });
 }
 
@@ -518,14 +474,14 @@ async function cambiarEstadoPedido(orderId, action) {
 
 // ================= ACTIVOS AGRUPADOS =================
 async function cargarPrestamosActivos() {
-    const data = await apiGet(${API_URL}/loans/active);
+    const data = await apiGet(`${API_URL}/loans/active`);
     const list = document.getElementById("activeLoansList");
     if (!list || !data) return;
 
     list.innerHTML = "";
 
     if (!data.length) {
-        list.innerHTML = "<p>No hay prÃ©stamos activos</p>";
+        list.innerHTML = "<p>No hay préstamos activos</p>";
         return;
     }
 
@@ -535,33 +491,26 @@ async function cargarPrestamosActivos() {
         const qty = loan.quantity || 1;
         const loanId = loan.id;
 
-        list.innerHTML += "
-            <div style=\"margin-bottom: 10px;\">
-                <div class=\"panol-item\" style=\"display: flex; justify-content: space-between; align-items: center; padding: 12px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);\">
+        list.innerHTML += `
+            <div style="margin-bottom: 10px;">
+                <div class="panol-item" style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                     <div>
-                        <b></b> x
-                        <br><span style=\"font-size: 0.85rem; opacity: 0.7;\"></span>
+                        <b>${userName}</b> ${catName} x ${qty}
+                        <br><span style="font-size: 0.85rem; opacity: 0.7;">${loan.description_loan || ''}</span>
                     </div>
-                    <button onclick=\"devolverPrestamo()\" style=\"background-color: #17a2b8; color: white; border: none; padding: 8px 18px; border-radius: 4px; cursor: pointer; font-weight: bold;\">Devolver</button>
+                    <button onclick="devolverPrestamo(${loanId})" style="background-color: #17a2b8; color: white; border: none; padding: 8px 18px; border-radius: 4px; cursor: pointer; font-weight: bold;">Devolver</button>
                 </div>
             </div>
-        ";
+        `;
     });
 }
 
 async function devolverPrestamo(loanId) {
-    const desc = prompt("Notas de devoluciÃ³n (opcional):");
+    const desc = prompt("Notas de devolución (opcional):");
     const body = desc && desc.trim() ? { description_return: desc.trim() } : {};
-    const res = await apiPut(${API_URL}/loans//return, body);
-    if (!res) return showToast("Error al devolver prÃ©stamo", true);
-    showToast("PrÃ©stamo devuelto correctamente");
-    cargarTodo();
-}
-
-async function devolver(code){
-    const res = await apiPost(`${API_URL}/loans/return`, { barcode: code });
-    if (!res) return showToast("Error al devolver", true);
-    showToast(`Herramienta ${code} devuelta correctamente`);
+    const res = await apiPut(`${API_URL}/loans/${loanId}/return`, body);
+    if (!res) return showToast("Error al devolver préstamo", true);
+    showToast("Préstamo devuelto correctamente");
     cargarTodo();
 }
 
