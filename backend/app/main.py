@@ -14,6 +14,7 @@ from app.modules.users.roles.routes import router as roles_router
 from app.modules.users.permissions.routes import router as permissions_router
 from app.modules.auth.routes import router as auth_router
 from app.modules.notifications.routes import router as notifications_router
+from app.modules.academico.archivos.routes import router as archivos_router
 
 Base.metadata.create_all(bind=engine)
 
@@ -36,3 +37,4 @@ app.include_router(roles_router)
 app.include_router(permissions_router)
 app.include_router(auth_router)
 app.include_router(notifications_router)
+app.include_router(archivos_router)

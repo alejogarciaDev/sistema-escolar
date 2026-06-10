@@ -22,8 +22,8 @@ main {
 /* General */
 body {
   font-family: sans-serif;
-  background-color: #0c0c0c;
-  color: #f0f0f0;
+  background-color: #ffffff;
+  color: #333333;
   margin: 0;
   padding: 0;
 }
@@ -104,8 +104,8 @@ header .hamburger-btn {
 
 /* pied de pagina*/
 .footer {
-  background-color: #111;
-  color: #ccc;
+  background-color: #f0f0f0;
+  color: #666;
   padding: 40px 20px 10px;
   font-size: 14px;
 }
@@ -124,7 +124,7 @@ width: 100%;   /* 👈 en vez de max-width */
 }
 
 .footer-section h4 {
-  color: #fff;
+  color: #333;
   margin-bottom: 10px;
 }
 
@@ -142,12 +142,12 @@ width: 100%;   /* 👈 en vez de max-width */
 }
 
 .footer-section ul li a {
-  color: #ccc;
+  color: #666;
   text-decoration: none;
 }
 
 .footer-section ul li a:hover {
-  color: #fff;
+  color: #333;
 }
 
 .social-icons a img {
@@ -173,16 +173,17 @@ width: 100%;   /* 👈 en vez de max-width */
 main {
     flex: 1;
     padding: 20px;
-    background-color: #1a1a1a;
+    background-color: #f5f5f5;
     font-family: sans-serif;
 }
 
 .admin-section {
-    background: #2a2a2a;
+    background: #ffffff;
     padding: 20px;
     margin-bottom: 25px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border: 1px solid #e0e0e0;
 }
 
 .admin-section h3 {
@@ -201,9 +202,9 @@ main {
     padding: 8px;
     font-size: 16px;
     flex: 1 1 150px;
-    background: #333;
-    color: #eee;
-    border: 1px solid #555;
+    background: #ffffff;
+    color: #333;
+    border: 1px solid #ccc;
     border-radius: 4px;
 }
 .admin-section button {
@@ -228,23 +229,24 @@ main {
 }
 
 .user-card {
-    background: #333;
+    background: #ffffff;
     padding: 15px;
     border-radius: 8px;
     flex: 1 1 calc(30% - 15px);
     min-width: 200px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: 1px solid #e0e0e0;
 }
 
 .user-card h4 {
     margin: 0 0 5px 0;
-    color: #f0f0f0;
+    color: #333;
 }
 
 .user-card p {
     margin: 2px 0;
     font-size: 14px;
-    color: #ccc;
+    color: #666;
 }
 
 /*dashboard pañol*/
@@ -284,11 +286,12 @@ button:hover {
 }
 
 .solicitar-box, .activos-box {
-    background: #3f3a3a;
+    background: #ffffff;
     padding: 20px;
     border-radius: 12px;
     margin-bottom: 20px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    border: 1px solid #e0e0e0;
 }
 
 /* FORM */
@@ -301,9 +304,9 @@ select {
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 8px;
-    border: 1px solid #530d0d;
-    background: #333;
-    color: #eee;
+    border: 1px solid #ccc;
+    background: #ffffff;
+    color: #333;
 }
 
 /* BOTÓN */
@@ -330,20 +333,20 @@ button:hover {
 table {
     width: 100%;
     border-collapse: collapse;
-    background: rgb(77, 70, 70);
+    background: #ffffff;
     border-radius: 5px;
     overflow: hidden;
 }
 
 th, td {
     padding: 10px;
-    border-bottom: 1px solid #7a2828;
+    border-bottom: 1px solid #e0e0e0;
     text-align: center;
 }
 
 th {
-    background-color: #922020;
-    
+    background-color: #9b0b0b;
+    color: #ffffff;
 }
 /*pañol*/
 /* CONTENEDOR GENERAL */
@@ -353,10 +356,11 @@ th {
 
 /* SECCIONES */
 .panol-section {
-    background: #2a2a2a;
+    background: #ffffff;
     padding: 15px;
     border-radius: 10px;
     margin-bottom: 20px;
+    border: 1px solid #e0e0e0;
 }
 
 /* FORMULARIO */
@@ -374,14 +378,15 @@ th {
 
 /* ITEMS */
 .panol-item {
-    background: #3a3a3a;
+    background: #f9f9f9;
     padding: 10px;
     border-radius: 6px;
     margin-bottom: 5px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: #eee;
+    color: #333;
+    border: 1px solid #e0e0e0;
 }
 /* 🔥 EVITA QUE ROMPA EL FOOTER */
 #historyList, #availableTools, #loansList, #deudoresList {
@@ -459,11 +464,12 @@ th {
 
 /* LISTA */
 .list-container {
-    background: #2a2a2a;
+    background: #ffffff;
     border-radius: 8px;
     padding: 10px;
     height: 120px;
     overflow-y: auto;
+    border: 1px solid #e0e0e0;
 }
 
 footer {
@@ -487,12 +493,12 @@ footer a:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #1a1a1a;
+    background-color: #f5f5f5;
 }
 
 /* Caja */
 .login-box {
-    background: #222;
+    background: #ffffff;
     padding: 40px;
     width: 320px;
     border-radius: 12px;
@@ -517,16 +523,16 @@ footer a:hover {
 .login-form input {
     padding: 10px;
     border-radius: 6px;
-    border: 1px solid #555;
-    background-color: #333;
-    color: #eee;
+    border: 1px solid #ccc;
+    background-color: #ffffff;
+    color: #333;
     outline: none;
     transition: 0.2s;
 }
 
 .login-form input:focus {
     border-color: #cc0000;
-    background-color: #444;
+    background-color: #fafafa;
 }
 
 /* Botón */
@@ -563,12 +569,13 @@ footer a:hover {
 }
 
 .modal-content {
-  background: #2a2a2a;
-  color: #eee;
+  background: #ffffff;
+  color: #333;
   margin: 10% auto;
   padding: 20px;
   width: 400px;
   border-radius: 10px;
+  border: 1px solid #e0e0e0;
 }
 
 .modal-content input {
@@ -587,10 +594,11 @@ footer a:hover {
     margin: 30px auto;
     padding: 25px;
     border-radius: 15px;
-    background: #2a2a2a;
-    color: #eee;
+    background: #ffffff;
+    color: #333;
     box-shadow: 0 8px 25px rgba(0,0,0,0.1);
     transition: transform 0.2s ease;
+    border: 1px solid #e0e0e0;
 }
 
 .tool-card:hover {
@@ -600,7 +608,7 @@ footer a:hover {
 .tool-card h3 {
     text-align: center;
     margin-bottom: 20px;
-    color: #eee;
+    color: #333;
 }
 
 .tool-form {
@@ -611,16 +619,16 @@ footer a:hover {
 
 .tool-form label {
     font-size: 14px;
-    color: #ccc;
+    color: #666;
 }
 
 .tool-form select,
 .tool-form input {
     padding: 10px;
     border-radius: 8px;
-    border: 1px solid #555;
-    background: #333;
-    color: #eee;
+    border: 1px solid #ccc;
+    background: #ffffff;
+    color: #333;
     outline: none;
     transition: border 0.2s;
 }
@@ -699,12 +707,12 @@ footer a:hover {
 }
 
 .doc-item {
-    background: #333;
-    border: 2px solid transparent;
+    background: #ffffff;
+    border: 2px solid #e0e0e0;
     border-radius: 10px;
     padding: 20px 15px;
     text-align: center;
-    color: #eee;
+    color: #333;
     cursor: default;
     transition: all 0.2s ease;
     position: relative;
@@ -714,6 +722,7 @@ footer a:hover {
     border-color: #9b0b0b;
     box-shadow: 0 4px 12px rgba(155, 11, 11, 0.15);
     transform: translateY(-2px);
+    background: #fafafa;
 }
 
 .doc-item.folder {
