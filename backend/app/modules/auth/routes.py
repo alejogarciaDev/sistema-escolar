@@ -101,15 +101,4 @@ DASHBOARDS = [
 # =========================
 @router.get("/mis-dashboards")
 def mis_dashboards(user=Depends(get_current_user_db)):
-    role_perms = {p.name for p in user.role.permissions} if user.role else set()
-    user_perms = {p.name for p in user.permissions}
-    all_perms = role_perms | user_perms
-
-    accesibles = []
-    for d in DASHBOARDS:
-        if user.role_id in d["roles"]:
-            accesibles.append(d)
-        elif any(p in all_perms for p in d["permissions"]):
-            accesibles.append(d)
-
-    return accesibles
+    return DASHBOARDS
