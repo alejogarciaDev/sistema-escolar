@@ -91,7 +91,7 @@ DASHBOARDS = [
     {"id": "admin",     "label": "Panel Admin",        "url": "dashboard_admin.html",     "roles": [3], "permissions": ["dashboard.admin"]},
     {"id": "profesor",  "label": "Panel Profesor",      "url": "dashboard_profesor.html",  "roles": [5], "permissions": ["dashboard.profesor"]},
     {"id": "alumno",    "label": "Panel Alumno",        "url": "dashboard_alumno.html",    "roles": [4], "permissions": ["dashboard.alumno"]},
-    {"id": "panol",     "label": "Panel Pañol",         "url": "dashboard_panol.html",     "roles": [2], "permissions": ["dashboard.panol"]},
+    {"id": "panol",     "label": "Panel Pañol",         "url": "dashboard_panol2.html",     "roles": [2], "permissions": ["dashboard.panol"]},
     {"id": "ofalumnos", "label": "Panel Oficina Alumnos","url": "dashboard_ofalumnos.html", "roles": [1], "permissions": ["dashboard.ofalumnos"]},
 ]
 

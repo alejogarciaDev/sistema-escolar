@@ -17,7 +17,7 @@ document.getElementById("loginForm").addEventListener("submit", function(e){
 
         // Redirige según rol
         if(encontrado.rol === "admin") window.location.href = "dashboard_admin.html";
-        else if(encontrado.rol === "pañol") window.location.href = "dashboard_panol.html";
+        else if(encontrado.rol === "pañol") window.location.href = "dashboard_panol2.html";
         else if(encontrado.rol === "profesor") window.location.href = "dashboard_profesor.html";
     } else {
         document.getElementById("error").textContent = "Usuario o contraseña incorrectos";
